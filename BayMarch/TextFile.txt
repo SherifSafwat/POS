@@ -1,0 +1,334 @@
+﻿            //var t = _context.Product.ToList();
+            //return _mapper.Map< List <Product>, List <ProductDto> >(t);
+            
+            //return await _context.Product.ToListAsync();
+
+            //var failedPushes = _mapper.Map<List<Push>, List<FailedPush>>(await pushes.Where(x => !x.Sent).ToListAsync());
+
+                        //var product = _context.Product.Find(id);
+            //return _mapper.Map<ProductDto>(product);
+
+               public Task<DbEntity> GetPaging(PageReq pageReq)
+        {
+            //var product = await _context.Product.FindAsync(1);
+
+            //.Database[""]..   //.Entry("").
+            //int aValue=55, anotherValue=66;
+            //string tableName = "product";
+
+            //var result = _context.Database.ExecuteSqlRawAsync(string.Format("SELECT * FROM {0} WHERE ID=@p0", tableName), 1). .GetAwaiter(). ;  // .FirstOrDefault();
+
+
+            /*var tableName = "MyTableName";
+            var tableClassNameSpace = "MyProject.Models.EntityModels";
+
+            using (_context)
+            {
+                var tableClassName = $"{tableClassNameSpace}.{tableName}";
+                var dynamicTableType = Type.GetType(tableClassName);      // Type
+                var dynamicTable = _context.Set<DbEntity>(dynamicTableType);      // DbSet
+
+                var records = dynamicTable
+                      .AsQueryable()
+                      //.ToDynamicList()
+                      .OrderBy(d => d.MyColumnName)
+                      .Select(d => new { d.MyColumnName })
+                      .ToList();
+
+                // do stuff
+            }*/
+
+
+            //var results = _context.Set<DbEntity>("");
+            //var t = results.AsQueryable().OrderBy<>() .OrderBy(on => on.name); 
+
+            //.Where("SomeProperty > @aValue and SomeThing < @anotherValue");
+
+
+            /*return FindAll()
+        .OrderBy(on => on.Name)
+        .Skip((ownerParameters.PageNumber - 1) * ownerParameters.PageSize)
+        .Take(ownerParameters.PageSize)
+        .ToList();*/
+
+            return null;
+        }
+
+
+        //public async Task<IActionResult> GetProductd(long id)
+        //{
+        //    var product = await _context.Product.FindAsync(id);
+        //    //var product = _context.Product.FirstOrDefault(x => x.ProductId == id);
+        //    return product;
+
+        //    //return _mapper.Map<ProductDto>( await _context.Product.FindAsync(id));
+
+        //}
+
+        /*private bool ProductExists(long id)
+        {
+            return _context.Product.Any(e => e.ProductId == id);
+        }*/
+
+
+                 
+        /*const int maxPageSize = 50;
+        public int PageNumber { get; set; } = 1;
+
+        private int _pageSize = 10;
+        public int PageSize
+        {
+            get
+            {
+                return _pageSize;
+            }
+            set
+            {
+                _pageSize = (value > maxPageSize) ? maxPageSize : value;
+            }
+        }*/
+
+             // CreatedAtAction("GetProduct", new { id = productDto.ProductId }, productDto);
+             
+
+                         //var product = _mapper.Map<Product>(productDto);
+            //_context.Product.Add(product);
+            //await _context.SaveChangesAsync();
+
+            
+
+            //var product = await _context.Product.FindAsync(id+1);
+
+            //var productDto = _mapper.Map<ProductDto>(product);
+            
+            //var product = await _context.Product.FindAsync(id);
+
+            //var productDto = _mapper.Map<ProductDto>(product);
+            
+            //var t = await _context.Product.ToListAsync();
+            //return Ok( _product.GetProduct() _mapper.Map<IEnumerable<ProductDto>> (t) );
+            //return Ok(_mapper.Map<IEnumerable<ProductDto>>(t));
+            //return await _context.Product.ToListAsync();
+                    //public async Task<ActionResult<IEnumerable<ProductDto>>> GetProduct()
+                            //[HttpGet("{id}")]
+        //public async Task<ActionResult<ProductDto>> GetProduct(long id)
+
+                /*public Task<ActionResult<IEnumerable<ProductDto>>> GetProduct();
+        public Task<ActionResult<ProductDto>> GetProduct(long id);
+        public Task<IActionResult> PutProduct(long id, Product product);
+        public Task<ActionResult<ProductDto>> PostProduct(ProductDto productDto);
+        public Task<IActionResult> DeleteProduct(long id);
+        private bool ProductExists(long id);*/
+
+
+            /*var product = await _context.Product.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            _context.Product.Remove(product);
+            await _context.SaveChangesAsync();
+
+            return NoContent();*/
+
+
+                        /*var product = await _context.Product.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            _context.Product.Remove(product);
+            await _context.SaveChangesAsync();
+            return NoContent();*/
+
+
+
+ --------------------------------------------------------------------------------------------------------------------->>>>>>>>>>>
+
+
+public IHttpActionResult Post(CUSTOMER [] newCustomer)
+{
+    try
+    {
+        foreach (CUSTOMER item in newCustomer)
+        {
+            var AddedCust = db.CUSTOMERs.Add(item);
+        }
+
+        int insertedRecords = db.SaveChanges();
+        return Ok(insertedRecords);
+    }
+    catch (Exception)
+    {
+        return BadRequest(ModelState);
+    }
+}
+
+ return _context.Masters.Include(m ->m.Details).ToList();
+ 
+ --------------------------------------------------------------------------------------------------------------------->>>>>>>>>>>
+
+
+ [HttpPost]
+public IHttpActionResult CreateBudget(NewBudget newBudget)
+{
+    var budget = new Budget
+    {
+        DateOfIssue = newBudget.Budget.DateOfIssue,
+        VehicleId = newBudget.Budget.VehicleId,
+        BudgetAccepted = newBudget.Budget.BudgetAccepted 
+    };
+
+    _context.Budgets.Add(budget);
+
+    foreach (var detail in newBudget.BudgetDetails)
+    {
+        var detailBudget = new BudgetDetail
+        {
+            //BudgetId = Here i need to get id of the Budget table that i inserted before
+            ProductId = detail.ProductId,
+            Price = detail.Price,
+            Quantity = detail.Quantity,
+            Iva = detail.Iva,
+            Total = detail.Total
+        };
+        _context.BudgetDetails.Add(detailBudget);
+    }
+    _context.SaveChanges();
+    return Ok();
+}
+
+
+public class NewBudget
+{
+    public Budget Budget{ get; set; }
+    public List<BudgetDetail> BudgetDetails{ get; set; }
+}
+This is my Budget class (Master table):
+
+public class Budget
+{
+    public int Id { get; set; }
+    public DateTime DateOfIssue { get; set; }
+    public int VehicleId { get; set; }
+    public bool BudgetAccepted { get; set; }
+}
+This is my BudgetDetail class (Detail table):
+
+ public class BudgetDetail
+{
+    public int Id { get; set; }
+    public int BudgetId { get; set; }
+    public int ProductId { get; set; }
+    public byte Quantity { get; set; }
+    public int Price { get; set; }
+    public int Iva { get; set; }
+    public int Total { get; set; }
+}
+
+context.BudgetDetails.Add(detailBudget);
+}
+_context.SaveChanges();
+return detailBudget.Id;
+
+--------------------------------------------------------------------------------------------------------------------->>>>>>>>>>>
+
+cookies for paging
+add nvarchar for models 
+IserviceProvide for serviceBase class
+contacts model
+
+--------------------------------------------------------------------------------------------------------------------->>>>>>>>>>>
+register user
+https://localhost:5001/api/authenticate/register
+    {
+        "username": "user111",
+        "password": "Pass12345!",
+        "sellerid": "1"
+    }
+
+login
+https://localhost:5001/api/authenticate/login/
+   {
+        "username": "user111",
+        "password": "Pass12345!"
+    }
+
+
+add product
+https://localhost:5001/api/products/create/
+{
+    "ename": "p3",
+    "price": 33
+}
+
+get product
+https://localhost:5001/api/products/Get/9
+{
+    "productId": 9,
+    "itemNum": 0,
+    "globalBarCode": 0,
+    "localBarCode": 0,
+    "eName": "p3",
+    "price" 33,
+    "aName": null,
+    "dataComment": null,
+    "taxId": 0,
+    "taxed": false,
+    "taxValue": 0.0
+}
+
+make invoice
+https://localhost:5001/api/invoices/create/
+{
+    "InvoiceHead":
+    {        
+        "Total":  33
+    },
+
+    "InvoiceTails": 
+    [
+    {
+        "LineNum": 1,
+        "productid": 9
+    },
+    {
+        "LineNum": 2,
+        "productid": 8
+    }
+
+    ]
+
+}
+
+make order
+https://localhost:5001/api/orders/create/
+{
+    "OrderHead":
+    {        
+        "Total":  33
+    },
+
+    "orderTails": 
+    [
+    {
+        "LineNum": 1,
+        "productid": 8
+    },
+    {
+        "LineNum": 2,
+        "productid": 9
+    }
+
+    ]
+
+}
+
+invoicing order
+
+
+--------------------------------------------------------------------------------------------------------------------->>>>>>>>>>>
+
+
+
