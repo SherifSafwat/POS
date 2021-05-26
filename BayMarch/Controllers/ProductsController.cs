@@ -3,6 +3,7 @@ using BayMarch.Dto;
 using Microsoft.AspNetCore.Authorization;
 using BayMarch.Services;
 using System.Security.Claims;
+using BayMarch.Dto.Filter;
 
 namespace BayMarch.Controllers
 {
@@ -23,10 +24,9 @@ namespace BayMarch.Controllers
         //[HttpGet(ApiRoutes.PropductRoutes.GetAll)]
         public IActionResult GetProduct()
         {
-            string userId = User.FindFirst(ClaimTypes.Name)?.Value;
-
-            return Ok(new { user = userId , data = _productSevice.GetAll() });
-            //return Ok(_productSevice.GetAll());
+            //string userId = User.FindFirst(ClaimTypes.Name)?.Value;
+            //return Ok(new { user = userId , data = _productSevice.GetAll() });
+            return Ok(_productSevice.GetAll());
         }
 
         [HttpGet]
@@ -42,6 +42,21 @@ namespace BayMarch.Controllers
 
             return Ok(product);
         }
+
+        [HttpGet]
+        [Route("Find")]
+        public IActionResult FindProduct(ProductFilter productFilter)
+        {
+            var product = _productSevice.Find(productFilter);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(product);
+        }
+
 
         [HttpPut]
         [Route("Update/{id}")]

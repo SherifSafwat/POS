@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BayMarch.Data;
 using BayMarch.Dto;
+using BayMarch.Dto.Filter;
 using BayMarch.Dto.Request;
 using BayMarch.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -59,6 +60,13 @@ namespace BayMarch.Services
         {
             return _mapper.Map<ProductDto>( _context.Product.Where(x => x.ProductId == id && x.SellerId == _sellerId).FirstOrDefault());
         }
+
+
+        public List<ProductDto> Find(ProductFilter productFilter)
+        {
+            return _mapper.Map<List<ProductDto>>(_context.Product.Where(x => (x.ProductId == productFilter.ProductId || x.EName.Contains(productFilter.EName) ) && x.SellerId == _sellerId).ToList());
+        }
+        
 
         public bool Update(ProductDto productDto)
         {
