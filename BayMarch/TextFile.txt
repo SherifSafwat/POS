@@ -1,4 +1,20 @@
-﻿            //var t = _context.Product.ToList();
+﻿filterdata
+page
+pagesize
+sortby
+isdesc
+---
+data
+currentpage
+totalpages
+
+---------
+
+
+
+
+
+            //var t = _context.Product.ToList();
             //return _mapper.Map< List <Product>, List <ProductDto> >(t);
             
             //return await _context.Product.ToListAsync();

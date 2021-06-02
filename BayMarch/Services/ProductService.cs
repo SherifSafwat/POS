@@ -30,9 +30,9 @@ namespace BayMarch.Services
         //private readonly ILogger _lo;
 
         //private readonly string userId;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IUserStore<ApplicationUser> _us;
-        private readonly JwtBearerHandler _jt;
+        //private readonly UserManager<ApplicationUser> _userManager;
+        //private readonly IUserStore<ApplicationUser> _us;
+        //private readonly JwtBearerHandler _jt;
 
         public ProductService(DataContext context, IMapper mapper, IHttpContextAccessor htttpAccessor
             , UserManager<ApplicationUser> userManager, IUserStore<ApplicationUser> us, JwtBearerHandler jt) : base()
