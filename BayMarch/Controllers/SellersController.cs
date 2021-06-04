@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BayMarch.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using BayMarch.Models;
 using Microsoft.AspNetCore.Authorization;
 using BayMarch.Services;
@@ -82,9 +75,7 @@ namespace BayMarch.Controllers
             else
             {
                 return NotFound();
-            }
-
-            
+            }            
         }
 
         // DELETE: api/Sellers/5

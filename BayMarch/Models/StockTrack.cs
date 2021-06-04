@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BayMarch.Models
 {
-    public class StockTrack : MastrerBaseModel
+    public class StockTrack : MastrerWithContact
     {
         public long StockTrackId { get; set; }
 

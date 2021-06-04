@@ -7,14 +7,11 @@ using BayMarch.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+
 
 namespace BayMarch.Services
 {
@@ -64,7 +61,7 @@ namespace BayMarch.Services
 
         public List<ProductDto> Find(ProductFilter productFilter)
         {
-            return _mapper.Map<List<ProductDto>>(_context.Product.Where(x => (x.ProductId == productFilter.ProductId || x.EName.Contains(productFilter.EName) ) && x.SellerId == _sellerId).ToList());
+            return _mapper.Map<List<ProductDto>>(_context.Product.Where(x => (x.ProductId == productFilter.Id || x.EName.Contains(productFilter.EName) ) && x.SellerId == _sellerId).ToList());
         }
         
 

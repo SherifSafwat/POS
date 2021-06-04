@@ -13,8 +13,8 @@ namespace BayMarch.Services
 {
     public class SellerService : ISellerService
     {
-        private readonly string _userId;
-        private readonly long   _sellerId;
+        //private readonly string _userId;
+        //private readonly long   _sellerId;
 
         private readonly IHttpContextAccessor _htttpAccessor;
         private readonly DataContext _context;
@@ -29,7 +29,6 @@ namespace BayMarch.Services
 
             //_userId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).Id;
             //_sellerId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).SellerId;
-
             //ApplicationUser currentUser = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name);
 
         }

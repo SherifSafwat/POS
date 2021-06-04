@@ -2,7 +2,6 @@
 using BayMarch.Dto;
 using Microsoft.AspNetCore.Authorization;
 using BayMarch.Services;
-using System.Security.Claims;
 using BayMarch.Dto.Filter;
 
 namespace BayMarch.Controllers

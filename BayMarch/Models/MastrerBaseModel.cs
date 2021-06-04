@@ -1,7 +1,7 @@
 ﻿using System;
 namespace BayMarch.Models
 {
-    public class MastrerBaseModel
+    public class MastrerWithContact
     {
         //Data
         public string EName { get; set; }

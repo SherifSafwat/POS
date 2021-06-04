@@ -1,9 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace BayMarch.Models
+﻿namespace BayMarch.Models
 {
-    [Table("WareHouse")]
-    public class WareHouse : MastrerBaseModel
+    public class WareHouse : MastrerWithContact
     {
         public long WareHouseId { get; set; }
 
@@ -12,6 +9,5 @@ namespace BayMarch.Models
         public long AreaId { get; set; }
         public float Longitude { get; set; }
         public float Latitude { get; set; }
-
     }
 }

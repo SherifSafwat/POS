@@ -1,25 +1,121 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BayMarch.Data;
 using BayMarch.Models;
+using BayMarch.Dto.Filter;
+using BayMarch.Services;
 
 namespace BayMarch.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class SuppliersController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly ISupplierService _supplierService;
 
-        public SuppliersController(DataContext context)
+        public SuppliersController(ISupplierService supplierService)
         {
-            _context = context;
+            _supplierService = supplierService;
         }
+
+
+        // GET: api/suppliers
+        //[HttpGet]
+        //[Route("GetAll")]
+        //public IActionResult GetAll()
+        //{
+        //    return Ok(_supplierService.GetAll());
+        //}
+
+        // GET: api/suppliers
+        [HttpGet]
+        [Route("GetDefault")]
+        public IActionResult GetDefault()
+        {
+            return Ok(_supplierService.GetDefault());
+        }
+
+        // GET: api/suppliers
+        [HttpGet]
+        [Route("GetPage")]
+        public IActionResult GetPage([FromQuery] DefaultFilter defaultFilter)
+        {
+            return Ok(_supplierService.GetPage(defaultFilter));
+        }
+
+        // GET: api/suppliers/5
+        [HttpGet("{id}")]
+        [Route("Get/{id}")]
+        public IActionResult GetSupplier(long id)
+        {
+            var supplier = _supplierService.Get(id);
+
+            if (supplier == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(supplier);
+        }
+
+        // PUT: api/suppliers/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        [Route("Update/{id}")]
+        public IActionResult PutSupplier(long id, Supplier supplier)
+        {
+            if (id != supplier.SupplierId)
+            {
+                return BadRequest();
+            }
+
+            if (_supplierService.Update(supplier))
+            {
+                return Ok(supplier);
+            }
+            else
+            {
+                return NotFound();
+            }
+
+        }
+
+        // POST: api/suppliers
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        [Route("Create")]
+        public IActionResult PostSupplier(Supplier supplier)
+        {
+            if (_supplierService.Create(supplier))
+            {
+                return CreatedAtAction("GetSupplier", new { id = supplier.SupplierId }, supplier);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        // DELETE: api/suppliers/5
+        [HttpDelete("{id}")]
+        [Route("Delete")]
+        public IActionResult DeleteSupplier(long id)
+        {
+            if (_supplierService.Delete(id))
+            {
+                return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+    }
+}
+
+
+/*
 
         // GET: api/Suppliers
         [HttpGet]
@@ -106,3 +202,6 @@ namespace BayMarch.Controllers
         }
     }
 }
+
+*/
+

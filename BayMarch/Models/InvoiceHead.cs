@@ -1,7 +1,7 @@
 ﻿using System;
 namespace BayMarch.Models
 {
-    public class InvoiceHead : MastrerBaseModel
+    public class InvoiceHead : MastrerWithContact
     {
         public long InvoiceHeadId { get; set; }
 

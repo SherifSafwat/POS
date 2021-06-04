@@ -4,14 +4,16 @@ using BayMarch.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BayMarch.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210604080946_6-4-1")]
+    partial class _641
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1074,9 +1076,6 @@ namespace BayMarch.Migrations
                     b.Property<long>("SourceId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("SupplierId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("SysComment")
                         .HasColumnType("nvarchar(max)");
 
@@ -1100,8 +1099,6 @@ namespace BayMarch.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("SellerId");
-
-                    b.HasIndex("SupplierId");
 
                     b.ToTable("Product");
                 });
@@ -1719,7 +1716,7 @@ namespace BayMarch.Migrations
             modelBuilder.Entity("BayMarch.Models.Price", b =>
                 {
                     b.HasOne("BayMarch.Models.Product", "ProductObj")
-                        .WithMany()
+                        .WithMany("ItemPrices")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1749,17 +1746,9 @@ namespace BayMarch.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BayMarch.Models.Supplier", "SupplierObj")
-                        .WithMany()
-                        .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("CategoryObj");
 
                     b.Navigation("SellerObj");
-
-                    b.Navigation("SupplierObj");
                 });
 
             modelBuilder.Entity("BayMarch.Models.Supplier", b =>
@@ -1833,6 +1822,11 @@ namespace BayMarch.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BayMarch.Models.Product", b =>
+                {
+                    b.Navigation("ItemPrices");
                 });
 #pragma warning restore 612, 618
         }

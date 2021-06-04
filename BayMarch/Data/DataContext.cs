@@ -16,9 +16,10 @@ namespace BayMarch.Data
             base.OnModelCreating(builder);
         }
 
-        public DbSet<Models.Product> Product { get; set; }
-        public DbSet<Models.Price> Price { get; set; }
         public DbSet<Models.Seller> Seller { get; set; }
+        public DbSet<Models.Product> Product { get; set; }
+        public DbSet<Models.Category> Category { get; set; }
+        public DbSet<Models.Price> Price { get; set; }
         public DbSet<Models.Supplier> Supplier { get; set; }
         public DbSet<Models.WareHouse> WareHouse { get; set; }
         public DbSet<Models.InvoiceHead> InvoiceHead { get; set; }
