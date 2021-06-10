@@ -1,7 +1,7 @@
 ﻿using System;
 namespace BayMarch.Models
 {
-    public class OrderHead : MastrerWithContact
+    public class OrderHead : MasterBaseModel
     {
         public long OrderHeadId { get; set; }
 
@@ -11,7 +11,7 @@ namespace BayMarch.Models
         public long? InvoiceHeadId { get; set; }
         public long? CustomerId { get; set; }
         //public Customer CustomerObj { get; set; }
-        public long? ClientId { get; set; }
+        //public long? ClientId { get; set; }
         //public Client ClientObj { get; set; }
         public DateTime OrderTime { get; set; }
 

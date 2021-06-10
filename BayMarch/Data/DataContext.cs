@@ -19,14 +19,17 @@ namespace BayMarch.Data
         public DbSet<Models.Seller> Seller { get; set; }
         public DbSet<Models.Product> Product { get; set; }
         public DbSet<Models.Category> Category { get; set; }
-        public DbSet<Models.Price> Price { get; set; }
+        public DbSet<Models.Uom> Uom { get; set; }
+        public DbSet<Models.Payment> Payment { get; set; }
         public DbSet<Models.Supplier> Supplier { get; set; }
-        public DbSet<Models.WareHouse> WareHouse { get; set; }
+        public DbSet<Models.Customer> Customer { get; set; }
+        public DbSet<Models.StockTrack> StockTrack { get; set; }
         public DbSet<Models.InvoiceHead> InvoiceHead { get; set; }
         public DbSet<Models.InvoiceTail> InvoiceTail { get; set; }
         public DbSet<Models.OrderHead> OrderHead { get; set; }
         public DbSet<Models.OrderTail> OrderTail { get; set; }
 
-
+        //public DbSet<Models.WareHouse> WareHouse { get; set; }
+        //public DbSet<Models.Price> Price { get; set; }
     }
 }

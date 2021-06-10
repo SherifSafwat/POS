@@ -17,7 +17,82 @@ namespace BayMarch.Services
 {
     public class ProductService : ServiceBase, IProductService
     {
+        private readonly string _userId;
+        private readonly long _sellerId;
 
+        private readonly IHttpContextAccessor _htttpAccessor;
+        private readonly DataContext _context;
+        private readonly IMapper _mapper;
+
+        public ProductService(DataContext context, IMapper mapper, IHttpContextAccessor htttpAccessor)
+        {
+            _htttpAccessor = htttpAccessor;
+            _context = context;
+            _mapper = mapper;
+
+            _userId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).Id;
+            _sellerId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).SellerId;
+        }
+
+        public bool Create(Product product)
+        {
+            product.SellerId = _sellerId;
+            _context.Product.Add(product);
+            return _context.SaveChanges() > 0;
+        }
+
+        public bool Delete(long id)
+        {
+            var product = _context.Product.Find(id);
+            _context.Product.Remove(product);
+            return _context.SaveChanges() > 0;
+        }
+
+        public Product Get(long id)
+        {
+            return _context.Product.Find(id);
+        }
+
+        //public Paging<Product> GetAll()
+        //{
+        //    return _context.Product.ToList();
+        //}
+
+        public Paging<Product> GetDefault()
+        {
+            return GetPage(new DefaultFilter { PageNumber = 1, Filter = false, Orderby = "CreationDate" });
+        }
+
+        public Paging<Product> GetPage(DefaultFilter df)
+        {
+
+            Paging<Product> resault = new Paging<Product>();
+            resault.TotalPages = (int)Math.Ceiling((double)_context.Product.Where(x => x.SellerId == _sellerId).Count() / df.MaxPageSize);
+            resault.CurrentPage = df.PageNumber;
+
+            if (df.Filter == false)
+            {
+                resault.Data = _context.Product.Where(x => x.SellerId == _sellerId).OrderBy(p => df.Orderby).Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToList();
+                return resault;
+            }
+
+            //resault.Data = _context.Product.Where(x => (x.ProductId == df.Id || x.EName.Contains(df.EName)) && x.SellerId == _sellerId).ToList();
+            resault.Data = _context.Product.Where(x => (x.ProductId == df.Id || x.EName.Contains(df.EName)) && x.SellerId == _sellerId).OrderBy(p => df.Orderby).Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToList();
+
+            return resault;
+
+        }
+
+        public bool Update(Product product)
+        {
+            _context.Entry(product).State = EntityState.Modified;
+            return _context.SaveChanges() > 0;
+        }
+    }
+}
+
+
+/*
         private readonly string _userId;
         private readonly long _sellerId;
 
@@ -106,3 +181,4 @@ namespace BayMarch.Services
      
     }
 }
+*/

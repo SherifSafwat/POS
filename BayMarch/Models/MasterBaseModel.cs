@@ -1,9 +1,10 @@
 ﻿using System;
 namespace BayMarch.Models
 {
-    public class MastrerWithContact
+    public class MasterBaseModel
     {
         //Data
+        public long Number{ get; set; }
         public string EName { get; set; }
         public string AName { get; set; }
         public string DataComment { get; set; }
@@ -32,7 +33,7 @@ namespace BayMarch.Models
         //Hierarchy
         public long SourceId { get; set; } //system or sellerid
         public long SellerId { get; set; }
-        public Seller SellerObj { get; set; }
+        public long UserId { get; set; }
         public string BranchId { get; set; }
 
         //Security

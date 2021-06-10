@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace BayMarch.Models
+﻿namespace BayMarch.Models
 {
-    public class MasterWithContact : MastrerWithContact
+    public class MasterWithContact : MasterBaseModel
     {
         //Contact
         public string Address1 { get; set; }

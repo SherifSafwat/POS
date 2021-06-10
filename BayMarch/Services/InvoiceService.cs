@@ -43,6 +43,7 @@ namespace BayMarch.Services
 
             _context.InvoiceHead.Add(invoiceDto.InvoiceHead);
             _context.InvoiceTail.AddRange(invoiceDto.InvoiceTails);
+            _context.Customer.Add(invoiceDto.Customer);
             return _context.SaveChanges() > 0;
         }
 
@@ -53,12 +54,17 @@ namespace BayMarch.Services
 
         public InvoiceDto Get(long id)
         {
+            InvoiceHead invoiceHead = _context.InvoiceHead.Where(x => x.InvoiceHeadId == id && x.SellerId == _sellerId).FirstOrDefault();
+
             InvoiceDto invoiceDto = new()
             {
                 //InvoiceHead = _context.InvoiceHead.Find(id),
                 //InvoiceTails = _context.InvoiceTail.Where(x => x.InvoiceHeadId == id).ToList()
-                InvoiceHead = _context.InvoiceHead.Where(x => x.InvoiceHeadId == id && x.SellerId == _sellerId).FirstOrDefault(),
-                InvoiceTails = _context.InvoiceTail.Where(x => x.InvoiceHeadId == id && x.SellerId == _sellerId).ToList()
+
+                //InvoiceHead = _context.InvoiceHead.Where(x => x.InvoiceHeadId == id && x.SellerId == _sellerId).FirstOrDefault(),
+                InvoiceHead = invoiceHead,
+                InvoiceTails = _context.InvoiceTail.Where(x => x.InvoiceHeadId == id && x.SellerId == _sellerId).ToList(),
+                Customer = _context.Customer.Where(x => x.CustomerId ==  invoiceHead.CustomerId ).FirstOrDefault(),
             };
             return invoiceDto;
         }

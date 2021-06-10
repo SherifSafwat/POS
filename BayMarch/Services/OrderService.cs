@@ -43,6 +43,7 @@ namespace BayMarch.Services
 
             _context.OrderHead.Add(orderDto.OrderHead);
             _context.OrderTail.AddRange(orderDto.OrderTails);
+            _context.Customer.Add(orderDto.Customer);
             return _context.SaveChanges() > 0;
         }
 
@@ -53,11 +54,14 @@ namespace BayMarch.Services
 
         public OrderDto Get(long id)
         {
+            OrderHead orderHead = _context.OrderHead.Where(x => x.OrderHeadId == id && x.SellerId == _sellerId).FirstOrDefault();
+
             OrderDto OrderDto = new()
             {
                 //OrderHead = _context.OrderHead.Find(id),
-                OrderHead = _context.OrderHead.Where(x => x.OrderHeadId == id && x.SellerId == _sellerId).FirstOrDefault(),
-                OrderTails = _context.OrderTail.Where(x => x.OrderHeadId == id && x.SellerId == _sellerId).ToList()
+                //OrderHead = _context.OrderHead.Where(x => x.OrderHeadId == id && x.SellerId == _sellerId).FirstOrDefault(),
+                OrderTails = _context.OrderTail.Where(x => x.OrderHeadId == id && x.SellerId == _sellerId).ToList(),
+                Customer = _context.Customer.Where(x => x.CustomerId == orderHead.CustomerId).FirstOrDefault(),
             };
             return OrderDto;
         }

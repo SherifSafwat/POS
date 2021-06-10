@@ -75,13 +75,17 @@ namespace BayMarch
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ISupplierService, SupplierService>();
+            services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<IUomService, UomService>();            
+            services.AddScoped<IStockTakeService, StockTakeService>();
+            services.AddScoped<IPaymentService, PaymentService>();
+            
+
+            //services.AddScoped<IWareHouseService, WareHouseService>();
 
 
             services.AddControllers().AddNewtonsoftJson(options =>  options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-
-            
-    //`
-
+                        
 
         }
 

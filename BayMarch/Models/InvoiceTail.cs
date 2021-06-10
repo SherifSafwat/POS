@@ -1,6 +1,6 @@
 ﻿namespace BayMarch.Models
 {
-    public class InvoiceTail : MastrerWithContact
+    public class InvoiceTail : MasterBaseModel
     {
         public long InvoiceTailId { get; set; }
 

@@ -3,6 +3,7 @@ using BayMarch.Dto;
 using Microsoft.AspNetCore.Authorization;
 using BayMarch.Services;
 using BayMarch.Dto.Filter;
+using BayMarch.Models;
 
 namespace BayMarch.Controllers
 {
@@ -11,13 +12,101 @@ namespace BayMarch.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductService _productSevice; 
+        private readonly IProductService _productService; 
 
         public ProductsController(IProductService productSevice)
         {
-            _productSevice = productSevice;
+            _productService = productSevice;
         }
 
+        // GET: api/products
+        [HttpGet]
+        [Route("GetDefault")]
+        public IActionResult GetDefault()
+        {
+            return Ok(_productService.GetDefault());
+        }
+
+        // GET: api/products
+        [HttpGet]
+        [Route("GetPage")]
+        public IActionResult GetPage([FromQuery] DefaultFilter defaultFilter)
+        {
+            return Ok(_productService.GetPage(defaultFilter));
+        }
+
+        // GET: api/products/5
+        [HttpGet("{id}")]
+        [Route("Get/{id}")]
+        public IActionResult GetProduct(long id)
+        {
+            var product = _productService.Get(id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(product);
+        }
+
+        // PUT: api/products/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        [Route("Update/{id}")]
+        public IActionResult PutProduct(long id, Product product)
+        {
+            if (id != product.ProductId)
+            {
+                return BadRequest();
+            }
+
+            if (_productService.Update(product))
+            {
+                return Ok(product);
+            }
+            else
+            {
+                return NotFound();
+            }
+
+        }
+
+        // POST: api/products
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        [Route("Create")]
+        public IActionResult PostProduct(Product product)
+        {
+            if (_productService.Create(product))
+            {
+                return CreatedAtAction("GetProduct", new { id = product.ProductId }, product);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        // DELETE: api/products/5
+        [HttpDelete("{id}")]
+        [Route("Delete")]
+        public IActionResult DeleteProduct(long id)
+        {
+            if (_productService.Delete(id))
+            {
+                return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+    }
+}
+
+/*
         [HttpGet]
         [Route("GetAll")]
         //[HttpGet(ApiRoutes.PropductRoutes.GetAll)]
@@ -125,3 +214,4 @@ namespace BayMarch.Controllers
             
     }
 }
+*/

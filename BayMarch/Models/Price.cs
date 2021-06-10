@@ -1,7 +1,7 @@
 ﻿using System;
 namespace BayMarch.Models
 {
-    public class Price : MastrerWithContact
+    public class Price : MasterBaseModel
     {
         public long PriceId { get; set; }
 
@@ -10,7 +10,6 @@ namespace BayMarch.Models
         public Product ProductObj { get; set; }
 
         //Data
-        public long PriceNum { get; set; }
         public long ItemPrice { get; set; }
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }

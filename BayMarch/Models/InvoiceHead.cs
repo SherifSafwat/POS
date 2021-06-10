@@ -1,18 +1,19 @@
 ﻿using System;
 namespace BayMarch.Models
 {
-    public class InvoiceHead : MastrerWithContact
+    public class InvoiceHead : MasterBaseModel
     {
         public long InvoiceHeadId { get; set; }
 
         //Data
         public long InvoiceNum { get; set; }
-        public long UserId { get; set; }
-        public long? DeviceId { get; set; }
+        //public long UserId { get; set; }
+        //public long? DeviceId { get; set; }
         public long? OrderHeadId { get; set; }
         public long? CustomerId { get; set; }
+        public long PaymentId { get; set; }
         //public Customer CustomerObj { get; set; }
-        public long? ClientId { get; set; }
+        //public long? ClientId { get; set; }
         //public Client ClientObj { get; set; }
 
         public DateTime InvoiceTime { get; set; }

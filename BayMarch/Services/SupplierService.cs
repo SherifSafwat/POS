@@ -11,7 +11,7 @@ namespace BayMarch.Services
 {
     public class SupplierService : ISupplierService
     {
-        private readonly string _userId;
+        //private readonly string _userId;
         private readonly long _sellerId;
 
         private readonly IHttpContextAccessor _htttpAccessor;
@@ -24,7 +24,7 @@ namespace BayMarch.Services
             _context = context;
             _mapper = mapper;
 
-            _userId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).Id;
+            //_userId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).Id;
             _sellerId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).SellerId;
         }
 

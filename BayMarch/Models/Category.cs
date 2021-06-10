@@ -1,10 +1,7 @@
 ﻿namespace BayMarch.Models
 {
-    public class Category : MastrerWithContact
+    public class Category : MasterBaseModel
     {
         public long CategoryId { get; set; }
-
-        //Data
-        public long CategoryNum { get; set; }
     }
 }

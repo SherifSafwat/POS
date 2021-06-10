@@ -2,9 +2,6 @@
 {
     public class Supplier : MasterWithContact
     {
-        public long SupplierId { get; set; }
-
-        //Data
-        public long SupplierNum { get; set; }        
+        public long SupplierId { get; set; }       
     }
 }
