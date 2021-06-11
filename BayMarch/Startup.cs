@@ -79,7 +79,8 @@ namespace BayMarch
             services.AddScoped<IUomService, UomService>();            
             services.AddScoped<IStockTakeService, StockTakeService>();
             services.AddScoped<IPaymentService, PaymentService>();
-            
+            services.AddScoped<IReportService, ReportService>();
+
 
             //services.AddScoped<IWareHouseService, WareHouseService>();
 
