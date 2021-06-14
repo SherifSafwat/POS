@@ -2,15 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using BayMarch.Services;
 using BayMarch.Dto.Filter;
-using System;
-using System.Net.Http;
-using System.Net;
-using System.Net.Http.Headers;
-using System.IO;
 
 namespace BayMarch.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ReportsController : ControllerBase
@@ -18,9 +13,9 @@ namespace BayMarch.Controllers
 
         private readonly IReportService _reportService;
 
-        public ReportsController(IReportService categoryService)
+        public ReportsController(IReportService reportService)
         {
-            _reportService = categoryService;
+            _reportService = reportService;
         }
 
         // GET: api/reports
@@ -31,11 +26,44 @@ namespace BayMarch.Controllers
             return Ok(_reportService.GetDefault());
         }
 
-        // GET: api/reports
-        [HttpGet]
+        [HttpPost]
         [Route("GetReport")]
-        public IActionResult GetReport(ReportFilter reportFilter)
+        public IActionResult PostReport(ReportFilter reportFilter)
         {
+            return File(_reportService.GetReport(reportFilter), "application/vnd.ms-excel", "report.xls");
+        }
+
+
+    }
+}
+
+
+/*
+ *             //HttpContext.Response.AddHeader("content-disposition", "attachment; filename=Information" + DateTime.Now.Year.ToString() + ".xls");
+
+            //HttpContext.Response.Headers.Add("o");
+
+            //this.Response.ContentType = "application/vnd.ms-excel";
+            //byte[] temp = System.Text.Encoding.UTF8.GetBytes(_reportService.GetReport(reportFilter).ToString());
+
+            //return File(_reportService.GetReport(reportFilter), "application/vnd.ms-excel");
+ * 
+ *             //HttpResponseMessage fullResponse = Request....CreateResponse(HttpStatusCode.OK);
+            //fullResponse.Content = new StreamContent(_reportService.GetReport(reportFilter).ToString());
+            //fullResponse.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("text/csv");
+            //return fullResponse;
+
+            //var source = new MockStream(_reportService.GetReport(reportFilter), true, true);
+
+            //StreamContent s = new MemoryStream(_reportService.GetReport(reportFilter));
+            
+
+            //MemoryStream ws = new MemoryStream(_reportService.GetReport(reportFilter));
+            //StreamContent s = new StreamContent(ws);
+
+            //Stream ss = new StreamContent(ws.);
+            //ws.WriteTo(ss);
+
             //HttpContext.Response.AddHeader("content-disposition", "attachment; filename=Information" + DateTime.Now.Year.ToString() + ".xls");
 
             //Response.Headers.Add("Content-Length", "1000");
@@ -49,44 +77,13 @@ namespace BayMarch.Controllers
 
 
             //byte[] temp = System.Text.Encoding.UTF8.GetBytes(_reportService.GetReport(reportFilter).ToString());
+            ////return Ok(s);
 
-            //HttpResponseMessage fullResponse = Request....CreateResponse(HttpStatusCode.OK);
-            //fullResponse.Content = new StreamContent(_reportService.GetReport(reportFilter).ToString());
-            //fullResponse.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("text/csv");
-            //return fullResponse;
-
-            //var source = new MockStream(_reportService.GetReport(reportFilter), true, true);
-
-            //StreamContent s = new MemoryStream(_reportService.GetReport(reportFilter));
-            
-
-            MemoryStream ws = new MemoryStream(_reportService.GetReport(reportFilter));
-
-            StreamContent s = new StreamContent(ws);
-
-            //Stream ss = new StreamContent(ws.);
-            //ws.WriteTo(ss);
-
-
-            return Ok(s);
-
-            //return File(_reportService.GetReport(reportFilter), "application/json");
+            //return File(_reportService.GetReport(reportFilter), "text/csv", "fileName");
             //return Ok(_reportService.GetReport(reportFilter));
-        }
-
-        [HttpPost]
-        [Route("GetReport1")]
-        public IActionResult GetReport1(ReportFilter reportFilter)
-        {
-            //HttpContext.Response.AddHeader("content-disposition", "attachment; filename=Information" + DateTime.Now.Year.ToString() + ".xls");
-
-            //HttpContext.Response.Headers.Add("o");
-
-            //this.Response.ContentType = "application/vnd.ms-excel";
-            //byte[] temp = System.Text.Encoding.UTF8.GetBytes(_reportService.GetReport(reportFilter).ToString());
-
-            return File(_reportService.GetReport(reportFilter), "application/vnd.ms-excel");
-        }
-
-    }
-}
+ * 
+ 
+ 
+ 
+ 
+ */

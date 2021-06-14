@@ -1,5 +1,6 @@
 ﻿using BayMarch.Data;
 using BayMarch.Dto.Filter;
+using BayMarch.Models;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,7 +8,7 @@ namespace BayMarch.Services
 {
     public interface IReportService : IDataControl
     {
-        public IDictionary<string,int> GetDefault();
+        public List<Report> GetDefault();
         public byte[] GetReport(ReportFilter reportFilter);
 
         //public Paging<Category> GetAll();
