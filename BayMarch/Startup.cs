@@ -22,12 +22,14 @@ namespace BayMarch
 
     public class Startup
     {
+        string conName;
         public IConfiguration Configuration { get; }
 
         //private IConfiguration _configuration;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            conName = Configuration["PolicyString:name"];
         }
 
 
@@ -39,6 +41,17 @@ namespace BayMarch
             services.AddControllers();
             services.AddAutoMapper(typeof(AutoMapperProfile));
             services.AddDbContext<DataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnString")));
+
+            services.AddCors(options =>
+            {
+                // this defines a CORS policy called "default"
+                options.AddPolicy(Configuration["PolicyString:name1"], policy =>
+                {
+                    policy.WithOrigins(Configuration["PolicyString:local"])
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
 
             // For Identity  
             services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -60,8 +73,8 @@ namespace BayMarch
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
-                    //ValidateIssuer = false,
-                    //ValidateAudience = false,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
                     ValidAudience = Configuration["JWT:ValidAudience"],
                     ValidIssuer = Configuration["JWT:ValidIssuer"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
@@ -104,7 +117,7 @@ namespace BayMarch
 
             app.UseRouting();
             // app.UseRequestLocalization();
-            app.UseCors();
+            app.UseCors(conName);
 
             app.UseAuthentication();
             app.UseAuthorization();

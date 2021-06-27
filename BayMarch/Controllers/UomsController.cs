@@ -4,7 +4,7 @@ using BayMarch.Services;
 
 namespace BayMarch.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UomsController : ControllerBase
