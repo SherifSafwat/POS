@@ -3,6 +3,9 @@ using BayMarch.Models;
 using Microsoft.AspNetCore.Authorization;
 using BayMarch.Dto.Filter;
 using BayMarch.Services;
+using BayMarch.Data;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace BayMarch.Controllers
 {
@@ -11,29 +14,96 @@ namespace BayMarch.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
+        private readonly IBaseInterface<Customer> _parentCategoryService;
 
-        private readonly ICustomerService _customerService;
-
-        public CustomersController(ICustomerService customerService)
+        public CustomersController(IBaseInterface<Customer> parentCategoryService)
         {
-            _customerService = customerService;
+            _parentCategoryService = parentCategoryService;
         }
 
-        // POST: api/customers
+        // GET: api/Customer
+        [HttpGet]
+        [Route("GetAll")]
+        public async Task<ActionResult<IEnumerable<Customer>>> GetAll(DefaultFilter df)
+        {
+            return Ok(await _parentCategoryService.GetAll(df));
+        }
+
+        // GET: api/Customer
+        [HttpGet]
+        [Route("GetList")]
+        public async Task<ActionResult<IEnumerable<Seller>>> GetList(DefaultFilter df)
+        {
+            return Ok(await _parentCategoryService.GetList(df));
+        }
+
+        // GET: api/Customer/5
+        [HttpGet("{id}")]
+        [Route("Get/{id}")]
+        public async Task<ActionResult<Customer>> Get(long id)
+        {
+            var parentCategory = await _parentCategoryService.Get(id);
+
+            if (parentCategory == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(parentCategory);
+        }
+
+        // PUT: api/Customer/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        [Route("Update/{id}")]
+        public async Task<ActionResult<Customer>> Put(long id, Customer parentCategory)
+        {
+            if (id != parentCategory.CustomerId)
+            {
+                return BadRequest();
+            }
+
+            if (await _parentCategoryService.Update(parentCategory))
+            {
+                return Ok(parentCategory);
+            }
+            else
+            {
+                return NotFound();
+            }
+
+        }
+
+        // POST: api/Customer
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Route("Create")]
-        public IActionResult PostCustomer(Customer customer)
+        public async Task<ActionResult<Customer>> Post(Customer parentCategory)
         {
-            if (_customerService.Create(customer))
+            if (await _parentCategoryService.Create(parentCategory))
             {
-                return CreatedAtAction("GetCustomer", new { id = customer.CustomerId }, customer);
+                return CreatedAtAction("Get", new { id = parentCategory.CustomerId }, parentCategory);
             }
             else
             {
                 return NotFound();
             }
         }
+
+        [HttpGet]
+        [Route("Page")]
+        public async Task<ActionResult<IEnumerable<Customer>>> Page(DefaultFilter df)
+        {
+            return Ok(await _parentCategoryService.Page(df));
+        }
+
+        [HttpGet]
+        [Route("Search")]
+        public async Task<ActionResult<IEnumerable<Customer>>> Search(DefaultFilter df)
+        {
+            return Ok(await _parentCategoryService.Search(df));
+        }
+
     }
 }
 

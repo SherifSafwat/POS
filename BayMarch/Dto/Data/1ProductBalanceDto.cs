@@ -1,7 +1,7 @@
 ﻿using System;
 namespace BayMarch.Dto
 {
-    public class ProductBalance
+    public class ProductBalanceDto
     {
         public long ProductId { get; set; }
         public DateTime Date { get; set; }

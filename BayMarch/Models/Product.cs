@@ -9,12 +9,11 @@
         public long LocalBarCode { get; set; }
         public long Price { get; set; }
 
+        //Foreign
+        public long ParentCategoryId { get; set; }
         public long CategoryId { get; set; }
-        //public Category CategoryObj { get; set; }
         public long SupplierId { get; set; }
-        //public Supplier SupplierObj { get; set; }        
         public long UomId { get; set; }
-        //public Uom UomObj { get; set; }
 
         //Tax
         public long TaxId { get; set; }

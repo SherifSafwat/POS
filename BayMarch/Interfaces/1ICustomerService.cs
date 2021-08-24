@@ -2,7 +2,7 @@
 using BayMarch.Models;
 namespace BayMarch.Services
 {
-    public interface ICustomerService : IDataControl
+    public interface ICustomerService : IDataControl<Customer>
     {
         public bool Create(Customer customer);
 

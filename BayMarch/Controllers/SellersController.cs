@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BayMarch.Models;
 using Microsoft.AspNetCore.Authorization;
-using BayMarch.Services;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using BayMarch.Dto.Filter;
+using BayMarch.Data;
 
 namespace BayMarch.Controllers
 {
@@ -10,9 +13,9 @@ namespace BayMarch.Controllers
     [ApiController]
     public class SellersController : ControllerBase
     {
-        private readonly ISellerService _sellerService;
+        private readonly IBaseInterface<Seller> _sellerService;
 
-        public SellersController(ISellerService sellerService)
+        public SellersController(IBaseInterface<Seller> sellerService)
         {
             _sellerService = sellerService;
         }
@@ -20,17 +23,25 @@ namespace BayMarch.Controllers
         // GET: api/Sellers
         [HttpGet]
         [Route("GetAll")]
-        public IActionResult GetSeller()
+        public async Task<ActionResult<IEnumerable<Seller>>> GetAll(DefaultFilter df)
         {
-            return Ok(_sellerService.GetAll());
+            return Ok(await _sellerService.GetAll(df));
+        }
+
+        // GET: api/Sellers
+        [HttpGet]
+        [Route("GetList")]
+        public async Task<ActionResult<IEnumerable<Seller>>> GetList()
+        {
+            return Ok(await _sellerService.GetList(null));
         }
 
         // GET: api/Sellers/5
         [HttpGet("{id}")]
         [Route("Get/{id}")]
-        public IActionResult GetSeller(long id)
+        public async Task<ActionResult<Seller>> Get(long id)
         {
-            var seller = _sellerService.Get(id);
+            var seller = await _sellerService.Get(id);
 
             if (seller == null)
             {
@@ -44,14 +55,14 @@ namespace BayMarch.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Route("Update/{id}")]
-        public IActionResult PutSeller(long id, Seller seller)
+        public async Task<ActionResult<Seller>> Put(long id, Seller seller)
         {
             if (id != seller.SellerId)
             {
                 return BadRequest();
             }
 
-            if (_sellerService.Update(seller))
+            if (await _sellerService.Update(seller))
             {
                 return Ok(seller);
             }
@@ -66,11 +77,11 @@ namespace BayMarch.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Route("Create")]
-        public IActionResult PostSeller(Seller seller)
+        public async Task<ActionResult<Seller>> Post(Seller seller)
         {
-            if (_sellerService.Create(seller))
+            if (await _sellerService.Create(seller))
             {
-                return CreatedAtAction("GetSeller", new { id = seller.SellerId }, seller);
+                return CreatedAtAction("Get", new { id = seller.SellerId }, seller);
             }
             else
             {
@@ -78,33 +89,19 @@ namespace BayMarch.Controllers
             }            
         }
 
-        // DELETE: api/Sellers/5
-        [HttpDelete("{id}")]
-        [Route("Delete")]
-        public IActionResult DeleteSeller(long id)
-        {
-            if (_sellerService.Delete(id))
-            {
-                return Ok();
-            }
-            else
-            {
-                return NotFound();
-            }
-        }
-
         [HttpGet]
         [Route("Page")]
-        public IActionResult PagingSeller(long id, string condition, string orderby)
+        public async Task<ActionResult<IEnumerable<Seller>>> Page(DefaultFilter df)
         {
-            return Ok(_sellerService.Page(id, condition, orderby));
+            return Ok(await _sellerService.Page(df));
         }
 
         [HttpGet]
-        [Route("PagesCount")]
-        public IActionResult PagesCountSeller()
+        [Route("Search")]
+        public async Task<ActionResult<IEnumerable<Seller>>> Search(DefaultFilter df)
         {
-            return Ok(_sellerService.PagesCount());
+            return Ok(await _sellerService.Search(df));
         }
+                
     }
 }

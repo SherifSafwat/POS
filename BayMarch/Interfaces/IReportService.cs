@@ -6,7 +6,7 @@ using System.Text;
 
 namespace BayMarch.Services
 {
-    public interface IReportService : IDataControl
+    public interface IReportService : IDataControl<Report>
     {
         public List<Report> GetDefault();
         public byte[] GetReport(ReportFilter reportFilter);

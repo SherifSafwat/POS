@@ -7,11 +7,10 @@ using System.Collections.Generic;
 
 namespace BayMarch.Services
 {
-    public interface IProductService : IDataControl
+    public interface IProductService : IDataControl<Product>
     {
         public Paging<Product> GetDefault();
         public Paging<Product> GetPage(DefaultFilter defaultFilter);
-        public Product Get(long id);
         public bool Update(Product category);
         public bool Create(Product category);
         public bool Delete(long id);

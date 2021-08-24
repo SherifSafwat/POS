@@ -1,80 +1,111 @@
-﻿using AutoMapper;
-using BayMarch.Data;
+﻿using BayMarch.Data;
+using BayMarch.Dto.Filter;
 using BayMarch.Dto.Request;
 using BayMarch.Models;
-using Microsoft.AspNetCore.Http;
+using DynamicExpressions.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+//using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BayMarch.Services
 {
-    public class SellerService : ISellerService
+    public class SellerService : IBaseInterface<Seller>
     {
-        //private readonly string _userId;
-        //private readonly long   _sellerId;
-
-        private readonly IHttpContextAccessor _htttpAccessor;
         private readonly DataContext _context;
-        private readonly IMapper _mapper;
-        //private readonly ILogger _lo;
 
-        public SellerService(DataContext context, IMapper mapper, IHttpContextAccessor htttpAccessor) 
+        public SellerService(DataContext context) 
         {
-            _htttpAccessor = htttpAccessor;
             _context = context;
-            _mapper = mapper;
-
-            //_userId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).Id;
-            //_sellerId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).SellerId;
-            //ApplicationUser currentUser = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name);
-
         }
-        public bool Create(Seller seller)
+
+        async Task<Seller> IBaseInterface<Seller>.Get(long id)
         {
-            //var seller = _mapper.Map<seller>(sellerDto);
-            _context.Seller.Add(seller);
-            return _context.SaveChanges() > 0;
-
+            return await _context.Seller.FindAsync(id);
         }
 
-        public bool Delete(long id)
+        async Task<IEnumerable<Seller>> IBaseInterface<Seller>.GetList(DefaultFilter df)
         {
-            var seller = _context.Seller.Find(id);
-            _context.Seller.Remove(seller);
-            return _context.SaveChanges() > 0;
+            return await _context.Seller.Where(x => x.Enabled == true).ToListAsync();
         }
 
-        public Seller Get(long id)
+        async Task<bool> IBaseInterface<Seller>.Create(Seller seller)
         {
-            return _context.Seller.Find(id);
+            await _context.Seller.AddAsync(seller);
+            return await _context.SaveChangesAsync() > 0;
         }
 
-        public List<Seller> GetAll()
+        async Task<bool> IBaseInterface<Seller>.Update(Seller obj)
         {
-            return _context.Seller.ToList();
+            _context.Entry(obj).State = EntityState.Modified;
+            return await _context.SaveChangesAsync() > 0;
         }
 
-        public List<Seller> Page(long id, string condition, string orderby)
-        {
-            PageReq p = new PageReq();
-            return _context.Seller.OrderBy(x => orderby).Skip((int)(id * p.MaxPageSize)).Take(p.MaxPageSize).ToList();
+        async Task<IEnumerable<Seller>> IBaseInterface<Seller>.GetAll(DefaultFilter df)
+        {            
+            if(!String.IsNullOrEmpty(df.Orderby) && df.IsDesc )
+                return await _context.Seller.OrderBy(df.Orderby + " desc").ToListAsync();
+
+            if (!String.IsNullOrEmpty(df.Orderby))
+                return await _context.Seller.OrderBy(df.Orderby).ToListAsync();
+
+            return await _context.Seller.ToListAsync();
         }
 
-        public PageReq PagesCount()
+        async Task<Paging<Seller>> IBaseInterface<Seller>.Page(DefaultFilter df)
         {
-            PageReq p = new PageReq();
-            p.TotalPages = (int)Math.Ceiling((double)(_context.Seller.Count() / p.MaxPageSize));
-            return p;
+            Paging<Seller> resault = new Paging<Seller>();
+            resault.TotalPages = (int)Math.Ceiling((double)_context.Seller.Count() / df.MaxPageSize);
+            resault.CurrentPage = df.PageNumber;
+
+            if (!String.IsNullOrEmpty(df.Orderby) && df.IsDesc)
+            {
+                resault.Data = await _context.Seller.OrderBy(df.Orderby + " desc").Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
+                return resault;
+            }
+                
+            if (!String.IsNullOrEmpty(df.Orderby))
+            {
+                resault.Data = await _context.Seller.OrderBy(df.Orderby).Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
+                return resault;
+            }
+                
+
+            resault.Data = await _context.Seller.Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
+            return resault;
+
         }
 
-        public bool Update(Seller seller)
+        async Task<Paging<Seller>> IBaseInterface<Seller>.Search(DefaultFilter df)
         {
-            //var seller = _mapper.Map<seller>(sellerDto);
-            _context.Entry(seller).State = EntityState.Modified;
-            return _context.SaveChanges() > 0;
+            Paging<Seller> resault = new Paging<Seller>();
+            resault.TotalPages = (int)Math.Ceiling((double)_context.Seller.Count() / df.MaxPageSize);
+            resault.CurrentPage = df.PageNumber;
+
+            if (!String.IsNullOrEmpty(df.Orderby) && df.IsDesc)
+            {
+                resault.Data = await _context.Seller.Where(x => x.SellerId.ToString().Contains(df.Filter) || x.EName.Contains(df.Filter) || x.AName.Contains(df.Filter) || x.DataComment.Contains(df.Filter))
+                    .OrderBy(df.Orderby + " desc").Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
+
+                return resault;
+            }
+
+            if (!String.IsNullOrEmpty(df.Orderby))
+            {
+                resault.Data = await _context.Seller.Where(x => x.SellerId.ToString().Contains(df.Filter) || x.EName.Contains(df.Filter) || x.AName.Contains(df.Filter) || x.DataComment.Contains(df.Filter))
+                    .OrderBy(df.Orderby).Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
+
+                return resault;
+            }
+
+            resault.Data = await _context.Seller.Where(x => x.SellerId.ToString().Contains(df.Filter) || x.EName.Contains(df.Filter) || x.AName.Contains(df.Filter) || x.DataComment.Contains(df.Filter))
+                .Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
+
+            return resault;
         }
+
+
     }
 }

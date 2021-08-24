@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace BayMarch.Services
 {
-    public interface IUomService : IDataControl
+    public interface IUomService : IDataControl<Uom>
     {
         public List<Uom> GetDefault();
         //public Paging<Category> GetAll();

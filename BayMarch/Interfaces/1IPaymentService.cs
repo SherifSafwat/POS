@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace BayMarch.Services
 {
-    public interface IPaymentService : IDataControl
+    public interface IPaymentService : IDataControl<Payment>
     {
         public List<Payment> GetDefault();
         //public Paging<Category> GetAll();

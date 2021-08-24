@@ -3,6 +3,9 @@ using BayMarch.Models;
 using Microsoft.AspNetCore.Authorization;
 using BayMarch.Dto.Filter;
 using BayMarch.Services;
+using BayMarch.Data;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BayMarch.Controllers
 {
@@ -11,43 +14,36 @@ namespace BayMarch.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly ICategoryService _categoryService;
 
-        public CategoriesController(ICategoryService categoryService)
+        private readonly IBaseInterface<Category> _categoryService;
+
+        public CategoriesController(IBaseInterface<Category> categoryService)
         {
             _categoryService = categoryService;
         }
 
-        // GET: api/categories
-        //[HttpGet]
-        //[Route("GetAll")]
-        //public IActionResult GetAll()
-        //{
-        //    return Ok(_categoryService.GetAll());
-        //}
-
-        // GET: api/categories
+        // GET: api/Categories
         [HttpGet]
-        [Route("GetDefault")]
-        public IActionResult GetDefault()
+        [Route("GetAll")]
+        public async Task<ActionResult<IEnumerable<Category>>> GetAll(DefaultFilter df)
         {
-            return Ok(_categoryService.GetDefault());
+            return Ok(await _categoryService.GetAll(df));
         }
 
-        // GET: api/categories
+        // GET: api/Categories
         [HttpGet]
-        [Route("GetPage")]
-        public IActionResult GetPage([FromQuery]DefaultFilter defaultFilter)
+        [Route("GetList")]
+        public async Task<ActionResult<IEnumerable<Category>>> GetList(DefaultFilter df)
         {
-            return Ok(_categoryService.GetPage(defaultFilter));
+            return Ok(await _categoryService.GetList(df));
         }
 
-        // GET: api/categories/5
+        // GET: api/Categories/5
         [HttpGet("{id}")]
         [Route("Get/{id}")]
-        public IActionResult GetCategory(long id)
+        public async Task<ActionResult<Category>> Get(long id)
         {
-            var category = _categoryService.Get(id);
+            var category = await _categoryService.Get(id);
 
             if (category == null)
             {
@@ -57,18 +53,18 @@ namespace BayMarch.Controllers
             return Ok(category);
         }
 
-        // PUT: api/categories/5
+        // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Route("Update/{id}")]
-        public IActionResult PutCategory(long id, Category category)
+        public async Task<ActionResult<Category>> Put(long id, Category category)
         {
             if (id != category.CategoryId)
             {
                 return BadRequest();
             }
 
-            if (_categoryService.Update(category))
+            if (await _categoryService.Update(category))
             {
                 return Ok(category);
             }
@@ -79,15 +75,15 @@ namespace BayMarch.Controllers
 
         }
 
-        // POST: api/categories
+        // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Route("Create")]
-        public IActionResult PostCategory(Category category)
+        public async Task<ActionResult<Category>> Post(Category category)
         {
-            if (_categoryService.Create(category))
+            if (await _categoryService.Create(category))
             {
-                return CreatedAtAction("GetCategory", new { id = category.CategoryId }, category);
+                return CreatedAtAction("Get", new { id = category.CategoryId }, category);
             }
             else
             {
@@ -95,131 +91,122 @@ namespace BayMarch.Controllers
             }
         }
 
-        // DELETE: api/categories/5
-        [HttpDelete("{id}")]
-        [Route("Delete")]
-        public IActionResult DeleteCategory(long id)
+        [HttpGet]
+        [Route("Page")]
+        public async Task<ActionResult<IEnumerable<Category>>> Page(DefaultFilter df)
         {
-            if (_categoryService.Delete(id))
-            {
-                return Ok();
-            }
-            else
-            {
-                return NotFound();
-            }
+            return Ok(await _categoryService.Page(df));
+        }
+
+        [HttpGet]
+        [Route("Search")]
+        public async Task<ActionResult<IEnumerable<Category>>> Search(DefaultFilter df)
+        {
+            return Ok(await _categoryService.Search(df));
         }
 
     }
 }
 
 
-/*
- 
-        [HttpGet]
-        [Route("Page")]
-        public IActionResult PagingSeller(long id, string condition, string orderby)
-        {
-            return Ok(_sellerService.Page(id, condition, orderby));
-        }
+/*private readonly ICategoryService _categoryService;
 
-        [HttpGet]
-        [Route("PagesCount")]
-        public IActionResult PagesCountSeller()
-        {
-            return Ok(_sellerService.PagesCount());
-        }
-
-*/
-
-/*
-private readonly DataContext _context;
-
-public CategoriesController(DataContext context)
+public CategoriesController(ICategoryService categoryService)
 {
-    _context = context;
+    _categoryService = categoryService;
 }
 
-// GET: api/Categories
+// GET: api/categories
+//[HttpGet]
+//[Route("GetAll")]
+//public IActionResult GetAll()
+//{
+//    return Ok(_categoryService.GetAll());
+//}
+
+// GET: api/categories
 [HttpGet]
-public async Task<ActionResult<IEnumerable<Category>>> GetCategory()
+[Route("GetDefault")]
+public IActionResult GetDefault()
 {
-    return await _context.Category.ToListAsync();
+    return Ok(_categoryService.GetDefault());
 }
 
-// GET: api/Categories/5
-[HttpGet("{id}")]
-public async Task<ActionResult<Category>> GetCategory(long id)
+// GET: api/categories
+[HttpGet]
+[Route("GetPage")]
+public IActionResult GetPage([FromQuery]DefaultFilter defaultFilter)
 {
-    var category = await _context.Category.FindAsync(id);
+    return Ok(_categoryService.GetPage(defaultFilter));
+}
+
+// GET: api/categories/5
+[HttpGet("{id}")]
+[Route("Get/{id}")]
+public IActionResult GetCategory(long id)
+{
+    var category = _categoryService.Get(id);
 
     if (category == null)
     {
         return NotFound();
     }
 
-    return category;
+    return Ok(category);
 }
 
-// PUT: api/Categories/5
+// PUT: api/categories/5
 // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 [HttpPut("{id}")]
-public async Task<IActionResult> PutCategory(long id, Category category)
+[Route("Update/{id}")]
+public IActionResult PutCategory(long id, Category category)
 {
     if (id != category.CategoryId)
     {
         return BadRequest();
     }
 
-    _context.Entry(category).State = EntityState.Modified;
-
-    try
+    if (_categoryService.Update(category))
     {
-        await _context.SaveChangesAsync();
+        return Ok(category);
     }
-    catch (DbUpdateConcurrencyException)
-    {
-        if (!CategoryExists(id))
-        {
-            return NotFound();
-        }
-        else
-        {
-            throw;
-        }
-    }
-
-    return NoContent();
-}
-
-// POST: api/Categories
-// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-[HttpPost]
-public async Task<ActionResult<Category>> PostCategory(Category category)
-{
-    _context.Category.Add(category);
-    await _context.SaveChangesAsync();
-
-    return CreatedAtAction("GetCategory", new { id = category.CategoryId }, category);
-}
-
-// DELETE: api/Categories/5
-[HttpDelete("{id}")]
-public async Task<IActionResult> DeleteCategory(long id)
-{
-    var category = await _context.Category.FindAsync(id);
-    if (category == null)
+    else
     {
         return NotFound();
     }
 
-    _context.Category.Remove(category);
-    await _context.SaveChangesAsync();
-
-    return NoContent();
 }
 
-private bool CategoryExists(long id)
+// POST: api/categories
+// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+[HttpPost]
+[Route("Create")]
+public IActionResult PostCategory(Category category)
 {
-    return _context.Category.Any(e => e.CategoryId == id);
+    if (_categoryService.Create(category))
+    {
+        return CreatedAtAction("GetCategory", new { id = category.CategoryId }, category);
+    }
+    else
+    {
+        return NotFound();
+    }
+}
+
+// DELETE: api/categories/5
+[HttpDelete("{id}")]
+[Route("Delete")]
+public IActionResult DeleteCategory(long id)
+{
+    if (_categoryService.Delete(id))
+    {
+        return Ok();
+    }
+    else
+    {
+        return NotFound();
+    }
+}
+
+}
 }*/

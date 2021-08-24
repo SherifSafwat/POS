@@ -1,184 +1,293 @@
-﻿using AutoMapper;
-using BayMarch.Data;
-using BayMarch.Dto;
+﻿using BayMarch.Data;
 using BayMarch.Dto.Filter;
-using BayMarch.Dto.Request;
 using BayMarch.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using DynamicExpressions.Linq;
+using System.Threading.Tasks;
 
 namespace BayMarch.Services
 {
-    public class ProductService : ServiceBase, IProductService
+    public class ProductService : IBaseInterface<Product>
     {
-        private readonly string _userId;
         private readonly long _sellerId;
-
-        private readonly IHttpContextAccessor _htttpAccessor;
         private readonly DataContext _context;
-        private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _htttpAccessor;
 
-        public ProductService(DataContext context, IMapper mapper, IHttpContextAccessor htttpAccessor)
+        public ProductService(DataContext context, IHttpContextAccessor htttpAccessor)
         {
-            _htttpAccessor = htttpAccessor;
             _context = context;
-            _mapper = mapper;
+            _htttpAccessor = htttpAccessor;
 
-            _userId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).Id;
+            var userId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).Id;
             _sellerId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).SellerId;
         }
 
-        public bool Create(Product product)
+        async Task<Product> IBaseInterface<Product>.Get(long id)
         {
-            product.SellerId = _sellerId;
-            _context.Product.Add(product);
-            return _context.SaveChanges() > 0;
+            return await _context.Product.FindAsync(id);
         }
 
-        public bool Delete(long id)
+        async Task<IEnumerable<Product>> IBaseInterface<Product>.GetList(DefaultFilter df)
         {
-            var product = _context.Product.Find(id);
-            _context.Product.Remove(product);
-            return _context.SaveChanges() > 0;
+            return await _context.Product.Where(x => x.Enabled == true && x.SellerId == _sellerId).ToListAsync();
         }
 
-        public Product Get(long id)
+        async Task<bool> IBaseInterface<Product>.Create(Product parentProduct)
         {
-            return _context.Product.Find(id);
+            await _context.Product.AddAsync(parentProduct);
+            return await _context.SaveChangesAsync() > 0;
         }
 
-        //public Paging<Product> GetAll()
-        //{
-        //    return _context.Product.ToList();
-        //}
-
-        public Paging<Product> GetDefault()
+        async Task<bool> IBaseInterface<Product>.Update(Product obj)
         {
-            return GetPage(new DefaultFilter { PageNumber = 1, Filter = false, Orderby = "CreationDate" });
+            _context.Entry(obj).State = EntityState.Modified;
+            return await _context.SaveChangesAsync() > 0;
         }
 
-        public Paging<Product> GetPage(DefaultFilter df)
+        async Task<IEnumerable<Product>> IBaseInterface<Product>.GetAll(DefaultFilter df)
         {
+            if (!String.IsNullOrEmpty(df.Orderby) && df.IsDesc)
+                return await _context.Product.OrderBy(df.Orderby + " desc").ToListAsync();
 
+            if (!String.IsNullOrEmpty(df.Orderby))
+                return await _context.Product.OrderBy(df.Orderby).ToListAsync();
+
+            return await _context.Product.ToListAsync();
+        }
+
+        async Task<Paging<Product>> IBaseInterface<Product>.Page(DefaultFilter df)
+        {
             Paging<Product> resault = new Paging<Product>();
-            resault.TotalPages = (int)Math.Ceiling((double)_context.Product.Where(x => x.SellerId == _sellerId).Count() / df.MaxPageSize);
+            resault.TotalPages = (int)Math.Ceiling((double)_context.Product.Count() / df.MaxPageSize);
             resault.CurrentPage = df.PageNumber;
 
-            if (df.Filter == false)
+            if (!String.IsNullOrEmpty(df.Orderby) && df.IsDesc)
             {
-                resault.Data = _context.Product.Where(x => x.SellerId == _sellerId).OrderBy(p => df.Orderby).Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToList();
+                resault.Data = await _context.Product.Where(x => x.Enabled == true && x.SellerId == _sellerId)
+                    .OrderBy(df.Orderby + " desc").Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
                 return resault;
             }
 
-            //resault.Data = _context.Product.Where(x => (x.ProductId == df.Id || x.EName.Contains(df.EName)) && x.SellerId == _sellerId).ToList();
-            resault.Data = _context.Product.Where(x => (x.ProductId == df.Id || x.EName.Contains(df.EName)) && x.SellerId == _sellerId).OrderBy(p => df.Orderby).Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToList();
+            if (!String.IsNullOrEmpty(df.Orderby))
+            {
+                resault.Data = await _context.Product.Where(x => x.Enabled == true && x.SellerId == _sellerId)
+                    .OrderBy(df.Orderby).Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
+                return resault;
+            }
 
+
+            resault.Data = await _context.Product.Where(x => x.Enabled == true && x.SellerId == _sellerId)
+                .Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
             return resault;
 
         }
 
-        public bool Update(Product product)
+        async Task<Paging<Product>> IBaseInterface<Product>.Search(DefaultFilter df)
         {
-            _context.Entry(product).State = EntityState.Modified;
-            return _context.SaveChanges() > 0;
+            Paging<Product> resault = new Paging<Product>();
+            resault.TotalPages = (int)Math.Ceiling((double)_context.Product.Count() / df.MaxPageSize);
+            resault.CurrentPage = df.PageNumber;
+
+            if (!String.IsNullOrEmpty(df.Orderby) && df.IsDesc)
+            {
+                resault.Data = await _context.Product.Where(x => (x.Enabled == true && x.SellerId == _sellerId) && x.ProductId.ToString().Contains(df.Filter) || x.EName.Contains(df.Filter) || x.AName.Contains(df.Filter) || x.DataComment.Contains(df.Filter))
+                    .OrderBy(df.Orderby + " desc").Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
+
+                return resault;
+            }
+
+            if (!String.IsNullOrEmpty(df.Orderby))
+            {
+                resault.Data = await _context.Product.Where(x => (x.Enabled == true && x.SellerId == _sellerId) && x.ProductId.ToString().Contains(df.Filter) || x.EName.Contains(df.Filter) || x.AName.Contains(df.Filter) || x.DataComment.Contains(df.Filter))
+                    .OrderBy(df.Orderby).Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
+
+                return resault;
+            }
+
+            resault.Data = await _context.Product.Where(x => (x.Enabled == true && x.SellerId == _sellerId) && x.ProductId.ToString().Contains(df.Filter) || x.EName.Contains(df.Filter) || x.AName.Contains(df.Filter) || x.DataComment.Contains(df.Filter))
+                .Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
+
+            return resault;
         }
+
+
+
     }
 }
 
 
-/*
-        private readonly string _userId;
-        private readonly long _sellerId;
+/*private readonly string _userId;
+private readonly long _sellerId;
 
-        private readonly IHttpContextAccessor _htttpAccessor;
-        private readonly DataContext _context;
-        private readonly IMapper _mapper;
-        //private readonly ILogger _lo;
+private readonly IHttpContextAccessor _htttpAccessor;
+private readonly DataContext _context;
+private readonly IMapper _mapper;
 
-        //private readonly string userId;
-        //private readonly UserManager<ApplicationUser> _userManager;
-        //private readonly IUserStore<ApplicationUser> _us;
-        //private readonly JwtBearerHandler _jt;
+public ProductService(DataContext context, IMapper mapper, IHttpContextAccessor htttpAccessor)
+{
+    _htttpAccessor = htttpAccessor;
+    _context = context;
+    _mapper = mapper;
 
-        public ProductService(DataContext context, IMapper mapper, IHttpContextAccessor htttpAccessor
-            , UserManager<ApplicationUser> userManager, IUserStore<ApplicationUser> us, JwtBearerHandler jt) : base()
-        {
-            _htttpAccessor = htttpAccessor;
-            _context = context;
-            _mapper = mapper;
+    _userId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).Id;
+    _sellerId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).SellerId;
+}
 
-            _userId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).Id;
-            _sellerId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).SellerId;
+public bool Create(Product product)
+{
+    product.SellerId = _sellerId;
+    _context.Product.Add(product);
+    return _context.SaveChanges() > 0;
+}
 
-            //_userManager = userManager;
-            //_us = us;
-            //_jt = jt;
-            //ApplicationUser currentUser = _context.Users.FirstOrDefault(x => x.UserName == ht.HttpContext.User.Identity.Name);
-            //var t  = _context.Users.FirstOrDefault(x => x.UserName == ht.HttpContext.User.Identity.Name).Id;
-        }
+public bool Delete(long id)
+{
+    var product = _context.Product.Find(id);
+    _context.Product.Remove(product);
+    return _context.SaveChanges() > 0;
+}
 
-        public List<ProductDto> GetAll()
-        {
-            return _mapper.Map<List<ProductDto>>(_context.Product.ToList());
-        }
+public Product Get(long id)
+{
+    return _context.Product.Find(id);
+}
 
-        public ProductDto Get(long id)
-        {
-            return _mapper.Map<ProductDto>( _context.Product.Where(x => x.ProductId == id && x.SellerId == _sellerId).FirstOrDefault());
-        }
+//public Paging<Product> GetAll()
+//{
+//    return _context.Product.ToList();
+//}
 
+public Paging<Product> GetDefault()
+{
+    return GetPage(new DefaultFilter { PageNumber = 1, Orderby = "CreationDate" });
 
-        public List<ProductDto> Find(ProductFilter productFilter)
-        {
-            return _mapper.Map<List<ProductDto>>(_context.Product.Where(x => (x.ProductId == productFilter.Id || x.EName.Contains(productFilter.EName) ) && x.SellerId == _sellerId).ToList());
-        }
-        
+}
 
-        public bool Update(ProductDto productDto)
-        {
-            var product = _mapper.Map<Product>(productDto);
-            _context.Entry(product).State = EntityState.Modified;
-            return _context.SaveChanges() > 0;
-        }
+public IEnumerable<Product> GetList()
+{
+    throw new NotImplementedException();
+}
 
-        public bool Create(ProductDto productDto)
-        {
-            var product = _mapper.Map<Product>(productDto);
+public Paging<Product> GetPage(DefaultFilter df)
+{
 
-            product.SellerId = _sellerId;
-            product.CreatedID = _userId;
-            _context.Product.Add(product);
-            return _context.SaveChanges() > 0;  
-        }
+    Paging<Product> resault = new Paging<Product>();
+    resault.TotalPages = (int)Math.Ceiling((double)_context.Product.Where(x => x.SellerId == _sellerId).Count() / df.MaxPageSize);
+    resault.CurrentPage = df.PageNumber;
 
-        public bool Delete(long id)
-        {
-            var product =  _context.Product.Find(id);
-            _context.Product.Remove(product);
-            return _context.SaveChanges() > 0 ;
-        }
-
-        public List<ProductDto> Page(long id, string orderby)
-        {
-            PageReq p = new PageReq();
-            var t = _context.Product.OrderBy(p => orderby ).Skip((int) (id * p.MaxPageSize) ).Take(p.MaxPageSize).ToList();
-            return _mapper.Map<List<Product>, List<ProductDto>>(t);
-        }
-
-        public PageReq PagesCount()
-        {
-            PageReq p = new PageReq();
-            p.TotalPages = (int)Math.Ceiling((double) (_context.Product.Count() / p.MaxPageSize));
-            return p;
-        }
-
-     
+    if (df.IsDesc)  //review error
+    {
+        resault.Data = _context.Product.Where(x => x.SellerId == _sellerId).OrderBy(p => df.Orderby).Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToList();
+        return resault;
     }
+
+    //resault.Data = _context.Product.Where(x => (x.ProductId == df.Id || x.EName.Contains(df.EName)) && x.SellerId == _sellerId).ToList();
+    //resault.Data = _context.Product.Where(x => (x.ProductId == df.Id || x.EName.Contains(df.EName)) && x.SellerId == _sellerId).OrderBy(p => df.Orderby).Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToList();
+
+    return resault;
+
+}
+
+public bool Update(Product product)
+{
+    _context.Entry(product).State = EntityState.Modified;
+    return _context.SaveChanges() > 0;
+}
+}
+}
+
+
+/*
+private readonly string _userId;
+private readonly long _sellerId;
+
+private readonly IHttpContextAccessor _htttpAccessor;
+private readonly DataContext _context;
+private readonly IMapper _mapper;
+//private readonly ILogger _lo;
+
+//private readonly string userId;
+//private readonly UserManager<ApplicationUser> _userManager;
+//private readonly IUserStore<ApplicationUser> _us;
+//private readonly JwtBearerHandler _jt;
+
+public ProductService(DataContext context, IMapper mapper, IHttpContextAccessor htttpAccessor
+    , UserManager<ApplicationUser> userManager, IUserStore<ApplicationUser> us, JwtBearerHandler jt) : base()
+{
+    _htttpAccessor = htttpAccessor;
+    _context = context;
+    _mapper = mapper;
+
+    _userId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).Id;
+    _sellerId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).SellerId;
+
+    //_userManager = userManager;
+    //_us = us;
+    //_jt = jt;
+    //ApplicationUser currentUser = _context.Users.FirstOrDefault(x => x.UserName == ht.HttpContext.User.Identity.Name);
+    //var t  = _context.Users.FirstOrDefault(x => x.UserName == ht.HttpContext.User.Identity.Name).Id;
+}
+
+public List<ProductDto> GetAll()
+{
+    return _mapper.Map<List<ProductDto>>(_context.Product.ToList());
+}
+
+public ProductDto Get(long id)
+{
+    return _mapper.Map<ProductDto>( _context.Product.Where(x => x.ProductId == id && x.SellerId == _sellerId).FirstOrDefault());
+}
+
+
+public List<ProductDto> Find(ProductFilter productFilter)
+{
+    return _mapper.Map<List<ProductDto>>(_context.Product.Where(x => (x.ProductId == productFilter.Id || x.EName.Contains(productFilter.EName) ) && x.SellerId == _sellerId).ToList());
+}
+
+
+public bool Update(ProductDto productDto)
+{
+    var product = _mapper.Map<Product>(productDto);
+    _context.Entry(product).State = EntityState.Modified;
+    return _context.SaveChanges() > 0;
+}
+
+public bool Create(ProductDto productDto)
+{
+    var product = _mapper.Map<Product>(productDto);
+
+    product.SellerId = _sellerId;
+    product.CreatedID = _userId;
+    _context.Product.Add(product);
+    return _context.SaveChanges() > 0;  
+}
+
+public bool Delete(long id)
+{
+    var product =  _context.Product.Find(id);
+    _context.Product.Remove(product);
+    return _context.SaveChanges() > 0 ;
+}
+
+public List<ProductDto> Page(long id, string orderby)
+{
+    PageReq p = new PageReq();
+    var t = _context.Product.OrderBy(p => orderby ).Skip((int) (id * p.MaxPageSize) ).Take(p.MaxPageSize).ToList();
+    return _mapper.Map<List<Product>, List<ProductDto>>(t);
+}
+
+public PageReq PagesCount()
+{
+    PageReq p = new PageReq();
+    p.TotalPages = (int)Math.Ceiling((double) (_context.Product.Count() / p.MaxPageSize));
+    return p;
+}
+
+
+}
 }
 */

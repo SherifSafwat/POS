@@ -29,7 +29,7 @@ namespace BayMarch.Services
             _sellerId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).SellerId;
         }
 
-        public long Add(ProductBalance productBalance)
+        /*public long Add(ProductBalance productBalance)
         {
             throw new NotImplementedException();
         }
@@ -42,7 +42,7 @@ namespace BayMarch.Services
         public long Deduct(ProductBalance productBalance)
         {
             throw new NotImplementedException();
-        }
+        }*/
 
         public long Get(long id)
         {

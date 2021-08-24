@@ -101,5 +101,15 @@ namespace BayMarch.Services
             //return null;
 
         }
+
+        public Report Get(long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<Report> GetList()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

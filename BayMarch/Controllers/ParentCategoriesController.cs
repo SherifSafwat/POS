@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using BayMarch.Models;
 using Microsoft.AspNetCore.Authorization;
-using BayMarch.Dto.Filter;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using BayMarch.Models;
+using BayMarch.Dto.Filter;
 using BayMarch.Data;
 
 namespace BayMarch.Controllers
@@ -11,25 +11,24 @@ namespace BayMarch.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentsController : ControllerBase
+    public class ParentCategoriesController : ControllerBase
     {
+        private readonly IBaseInterface<ParentCategory> _parentCategoryService;
 
-        private readonly IBaseInterface<Payment> _parentCategoryService;
-
-        public PaymentsController(IBaseInterface<Payment> parentCategoryService)
+        public ParentCategoriesController(IBaseInterface<ParentCategory> parentCategoryService)
         {
             _parentCategoryService = parentCategoryService;
         }
 
-        // GET: api/Payments
+        // GET: api/ParentCategories
         [HttpGet]
         [Route("GetAll")]
-        public async Task<ActionResult<IEnumerable<Payment>>> GetAll(DefaultFilter df)
+        public async Task<ActionResult<IEnumerable<ParentCategory>>> GetAll(DefaultFilter df)
         {
             return Ok(await _parentCategoryService.GetAll(df));
         }
 
-        // GET: api/Payments
+        // GET: api/ParentCategories
         [HttpGet]
         [Route("GetList")]
         public async Task<ActionResult<IEnumerable<Seller>>> GetList()
@@ -37,10 +36,10 @@ namespace BayMarch.Controllers
             return Ok(await _parentCategoryService.GetList(null));
         }
 
-        // GET: api/Payments/5
+        // GET: api/ParentCategories/5
         [HttpGet("{id}")]
         [Route("Get/{id}")]
-        public async Task<ActionResult<Payment>> Get(long id)
+        public async Task<ActionResult<ParentCategory>> Get(long id)
         {
             var parentCategory = await _parentCategoryService.Get(id);
 
@@ -52,13 +51,13 @@ namespace BayMarch.Controllers
             return Ok(parentCategory);
         }
 
-        // PUT: api/Payments/5
+        // PUT: api/ParentCategories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Route("Update/{id}")]
-        public async Task<ActionResult<Payment>> Put(long id, Payment parentCategory)
+        public async Task<ActionResult<ParentCategory>> Put(long id, ParentCategory parentCategory)
         {
-            if (id != parentCategory.PaymentId)
+            if (id != parentCategory.ParentCategoryId)
             {
                 return BadRequest();
             }
@@ -74,35 +73,35 @@ namespace BayMarch.Controllers
 
         }
 
-        // POST: api/Payments
+        // POST: api/ParentCategories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Route("Create")]
-        public async Task<ActionResult<Payment>> Post(Payment parentCategory)
+        public async Task<ActionResult<ParentCategory>> Post(ParentCategory parentCategory)
         {
             if (await _parentCategoryService.Create(parentCategory))
             {
-                return CreatedAtAction("Get", new { id = parentCategory.PaymentId }, parentCategory);
+                return CreatedAtAction("Get", new { id = parentCategory.ParentCategoryId }, parentCategory);
             }
             else
             {
                 return NotFound();
-            }
+            }            
         }
 
         [HttpGet]
         [Route("Page")]
-        public async Task<ActionResult<IEnumerable<Payment>>> Page(DefaultFilter df)
+        public async Task<ActionResult<IEnumerable<ParentCategory>>> Page(DefaultFilter df)
         {
             return Ok(await _parentCategoryService.Page(df));
         }
 
         [HttpGet]
         [Route("Search")]
-        public async Task<ActionResult<IEnumerable<Payment>>> Search(DefaultFilter df)
+        public async Task<ActionResult<IEnumerable<ParentCategory>>> Search(DefaultFilter df)
         {
             return Ok(await _parentCategoryService.Search(df));
         }
-
+                
     }
 }

@@ -1,0 +1,28 @@
+﻿68.71.130.74,1533
+bayacom1_baya3_v1 \ baya3_db \ baya3_@Db
+
+apis.baya3.com
+68.71.130.66
+
+bayacom1 \ Bayacom@123
+
+
+
+Server=(localdb)\mssqllocaldb;Database=BayData;Trusted_Connection=True;MultipleActiveResultSets=true
+
+baya3_ftp \ baya3_@Ftp
+
+,
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "WooContext": "Data Source=68.71.130.74,1533;Initial Catalog=bayacom1_baya3_v1;User Id=baya3_db;Password=baya3_@Db;"
+  }
+  
+  
+  
+  
+  1/1/2001 12:00:00 AM
+  
+  
+  
+			

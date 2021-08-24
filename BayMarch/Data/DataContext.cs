@@ -12,14 +12,16 @@ namespace BayMarch.Data
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
-        {
+        {            
             base.OnModelCreating(builder);
         }
 
         public DbSet<Models.Seller> Seller { get; set; }
         public DbSet<Models.Product> Product { get; set; }
+        public DbSet<Models.ParentCategory> ParentCategory { get; set; }
         public DbSet<Models.Category> Category { get; set; }
         public DbSet<Models.Uom> Uom { get; set; }
+        public DbSet<Models.Type> Type { get; set; }
         public DbSet<Models.Payment> Payment { get; set; }
         public DbSet<Models.Supplier> Supplier { get; set; }
         public DbSet<Models.Customer> Customer { get; set; }

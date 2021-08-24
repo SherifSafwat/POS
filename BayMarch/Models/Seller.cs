@@ -10,8 +10,16 @@ namespace BayMarch.Models
         public string EName { get; set; }
         public string AName { get; set; }
         public string DataComment { get; set; }
+        public string StoreName { get; set; }
+        public string TaxNumber { get; set; }
+        public string RegisterNumber { get; set; }
 
         //Contact
+        public string Email1 { get; set; }
+        public string Email2 { get; set; }
+        public string Email3 { get; set; }
+        public string Email4 { get; set; }
+        public string Email5 { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
         public string Address3 { get; set; }
@@ -48,6 +56,8 @@ namespace BayMarch.Models
         public string Comment4 { get; set; }
         public string Comment5 { get; set; }
 
+        //Foreign
+        public long TypeId { get; set; }
 
         //Hierarchy
         public long SourceId { get; set; } //system or sellerid

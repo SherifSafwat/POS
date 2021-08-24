@@ -4,14 +4,16 @@ using BayMarch.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BayMarch.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210809155416_8-9-1")]
+    partial class _891
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -266,9 +268,6 @@ namespace BayMarch.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("Number")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("ParentCategoryId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("SellerId")
@@ -1011,120 +1010,6 @@ namespace BayMarch.Migrations
                     b.ToTable("OrderTail");
                 });
 
-            modelBuilder.Entity("BayMarch.Models.ParentCategory", b =>
-                {
-                    b.Property<long>("ParentCategoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("AName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BranchId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Comment1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Comment2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Comment3")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Comment4")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Comment5")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CreatedID")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DataComment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("GrantBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GrantComment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("GrantFromDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("GrantToDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("InfoName1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InfoName2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InfoName3")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InfoName4")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InfoName5")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InfoValue1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InfoValue2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InfoValue3")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InfoValue4")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InfoValue5")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("Number")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("SellerId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("SourceId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("SysComment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("TypeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("UpdatedID")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatingDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("ParentCategoryId");
-
-                    b.ToTable("ParentCategory");
-                });
-
             modelBuilder.Entity("BayMarch.Models.Payment", b =>
                 {
                     b.Property<long>("PaymentId")
@@ -1333,9 +1218,6 @@ namespace BayMarch.Migrations
                     b.Property<long>("Number")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("ParentCategoryId")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("Price")
                         .HasColumnType("bigint");
 
@@ -1447,21 +1329,6 @@ namespace BayMarch.Migrations
                     b.Property<string>("EName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Email1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email3")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email4")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email5")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
 
@@ -1522,26 +1389,14 @@ namespace BayMarch.Migrations
                     b.Property<string>("Person5")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RegisterNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<long>("SellerNum")
                         .HasColumnType("bigint");
 
                     b.Property<long>("SourceId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("StoreName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SysComment")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TaxNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("TypeId")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("UpdatedID")
                         .HasColumnType("nvarchar(max)");

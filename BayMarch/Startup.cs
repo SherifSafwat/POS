@@ -10,12 +10,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog.Core;
+using Serilog;
+using BayMarch.Models;
 
 namespace BayMarch
 {
@@ -42,12 +46,13 @@ namespace BayMarch
             services.AddAutoMapper(typeof(AutoMapperProfile));
             services.AddDbContext<DataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnString")));
 
+
             services.AddCors(options =>
             {
                 // this defines a CORS policy called "default"
-                options.AddPolicy(Configuration["PolicyString:name1"], policy =>
+                options.AddPolicy(conName, policy =>
                 {
-                    policy.WithOrigins(Configuration["PolicyString:local"])
+                    policy.AllowAnyOrigin()
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
@@ -82,20 +87,21 @@ namespace BayMarch
             });
 
             //Services
-            services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<ISellerService, SellerService>();
+            services.AddScoped<IBaseInterface<Models.Type>, TypeService>();
+            services.AddScoped<IBaseInterface<Seller>, SellerService>();
+            services.AddScoped<IBaseInterface<ParentCategory>, ParentCategoryService>();
+            services.AddScoped<IBaseInterface<Category>, CategoryService>();
+            services.AddScoped<IBaseInterface<Product>, ProductService>();
+            services.AddScoped<IBaseInterface<Supplier>, SupplierService>();
+            services.AddScoped<IBaseInterface<Uom>, UomService>();
+            services.AddScoped<IBaseInterface<Customer>, CustomerService>();
+            services.AddScoped<IBaseInterface<Payment>, PaymentService>();
+
             services.AddScoped<IInvoiceService, InvoiceService>();
-            services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<ICategoryService, CategoryService>();
-            services.AddScoped<ISupplierService, SupplierService>();
-            services.AddScoped<ICustomerService, CustomerService>();
-            services.AddScoped<IUomService, UomService>();            
-            services.AddScoped<IStockTakeService, StockTakeService>();
-            services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IOrderService, OrderService>();                       
+            services.AddScoped<IStockTakeService, StockTakeService>();            
             services.AddScoped<IReportService, ReportService>();
 
-
-            //services.AddScoped<IWareHouseService, WareHouseService>();
 
 
             services.AddControllers().AddNewtonsoftJson(options =>  options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
@@ -114,6 +120,8 @@ namespace BayMarch
             //app.UseHttpsRedirection();
             //app.UseStaticFiles();
             // app.UseCookiePolicy();
+
+            //app.UseSerilogRequestLogging();
 
             app.UseRouting();
             // app.UseRequestLocalization();
