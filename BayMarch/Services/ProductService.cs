@@ -36,9 +36,10 @@ namespace BayMarch.Services
             return await _context.Product.Where(x => x.Enabled == true && x.SellerId == _sellerId).ToListAsync();
         }
 
-        async Task<bool> IBaseInterface<Product>.Create(Product parentProduct)
+        async Task<bool> IBaseInterface<Product>.Create(Product product)
         {
-            await _context.Product.AddAsync(parentProduct);
+            product.SellerId = _sellerId;
+            await _context.Product.AddAsync(product);
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -56,31 +57,33 @@ namespace BayMarch.Services
             if (!String.IsNullOrEmpty(df.Orderby))
                 return await _context.Product.OrderBy(df.Orderby).ToListAsync();
 
-            return await _context.Product.ToListAsync();
+            return await _context.Product.OrderBy(x => x.ProductId).ToListAsync();
         }
 
         async Task<Paging<Product>> IBaseInterface<Product>.Page(DefaultFilter df)
         {
+            double i = await _context.Product.CountAsync();
+
             Paging<Product> resault = new Paging<Product>();
-            resault.TotalPages = (int)Math.Ceiling((double)_context.Product.Count() / df.MaxPageSize);
+            resault.TotalPages = (int)Math.Ceiling(i / df.MaxPageSize);
             resault.CurrentPage = df.PageNumber;
 
             if (!String.IsNullOrEmpty(df.Orderby) && df.IsDesc)
             {
-                resault.Data = await _context.Product.Where(x => x.Enabled == true && x.SellerId == _sellerId)
+                resault.Data = await _context.Product.Where(x => x.SellerId == _sellerId)
                     .OrderBy(df.Orderby + " desc").Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
                 return resault;
             }
 
             if (!String.IsNullOrEmpty(df.Orderby))
             {
-                resault.Data = await _context.Product.Where(x => x.Enabled == true && x.SellerId == _sellerId)
+                resault.Data = await _context.Product.Where(x => x.SellerId == _sellerId)
                     .OrderBy(df.Orderby).Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
                 return resault;
             }
 
 
-            resault.Data = await _context.Product.Where(x => x.Enabled == true && x.SellerId == _sellerId)
+            resault.Data = await _context.Product.Where(x => x.SellerId == _sellerId)
                 .Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
             return resault;
 
@@ -94,7 +97,7 @@ namespace BayMarch.Services
 
             if (!String.IsNullOrEmpty(df.Orderby) && df.IsDesc)
             {
-                resault.Data = await _context.Product.Where(x => (x.Enabled == true && x.SellerId == _sellerId) && x.ProductId.ToString().Contains(df.Filter) || x.EName.Contains(df.Filter) || x.AName.Contains(df.Filter) || x.DataComment.Contains(df.Filter))
+                resault.Data = await _context.Product.Where(x => (x.SellerId == _sellerId) && x.ProductId.ToString().Contains(df.Filter) || x.EName.Contains(df.Filter) || x.AName.Contains(df.Filter) || x.DataComment.Contains(df.Filter))
                     .OrderBy(df.Orderby + " desc").Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
 
                 return resault;
@@ -102,13 +105,13 @@ namespace BayMarch.Services
 
             if (!String.IsNullOrEmpty(df.Orderby))
             {
-                resault.Data = await _context.Product.Where(x => (x.Enabled == true && x.SellerId == _sellerId) && x.ProductId.ToString().Contains(df.Filter) || x.EName.Contains(df.Filter) || x.AName.Contains(df.Filter) || x.DataComment.Contains(df.Filter))
+                resault.Data = await _context.Product.Where(x => (x.SellerId == _sellerId) && x.ProductId.ToString().Contains(df.Filter) || x.EName.Contains(df.Filter) || x.AName.Contains(df.Filter) || x.DataComment.Contains(df.Filter))
                     .OrderBy(df.Orderby).Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
 
                 return resault;
             }
 
-            resault.Data = await _context.Product.Where(x => (x.Enabled == true && x.SellerId == _sellerId) && x.ProductId.ToString().Contains(df.Filter) || x.EName.Contains(df.Filter) || x.AName.Contains(df.Filter) || x.DataComment.Contains(df.Filter))
+            resault.Data = await _context.Product.Where(x => (x.SellerId == _sellerId) && x.ProductId.ToString().Contains(df.Filter) || x.EName.Contains(df.Filter) || x.AName.Contains(df.Filter) || x.DataComment.Contains(df.Filter))
                 .Skip((int)((df.PageNumber - 1) * df.MaxPageSize)).Take(df.MaxPageSize).ToListAsync();
 
             return resault;

@@ -53,6 +53,8 @@ namespace BayMarch.Controllers
             return Ok(category);
         }
 
+
+        /*
         // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -103,7 +105,7 @@ namespace BayMarch.Controllers
         public async Task<ActionResult<IEnumerable<Category>>> Search(DefaultFilter df)
         {
             return Ok(await _categoryService.Search(df));
-        }
+        }*/
 
     }
 }

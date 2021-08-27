@@ -51,14 +51,17 @@ namespace BayMarch.Services
             if (!String.IsNullOrEmpty(df.Orderby))
                 return await _context.Seller.OrderBy(df.Orderby).ToListAsync();
 
-            return await _context.Seller.ToListAsync();
+            return await _context.Seller.OrderBy(x => x.SellerId).ToListAsync();
         }
 
         async Task<Paging<Seller>> IBaseInterface<Seller>.Page(DefaultFilter df)
         {
+            double i = await _context.Seller.CountAsync();
+
             Paging<Seller> resault = new Paging<Seller>();
-            resault.TotalPages = (int)Math.Ceiling((double)_context.Seller.Count() / df.MaxPageSize);
+            resault.TotalPages = (int)Math.Ceiling(i / df.MaxPageSize);
             resault.CurrentPage = df.PageNumber;
+
 
             if (!String.IsNullOrEmpty(df.Orderby) && df.IsDesc)
             {
@@ -80,8 +83,10 @@ namespace BayMarch.Services
 
         async Task<Paging<Seller>> IBaseInterface<Seller>.Search(DefaultFilter df)
         {
+            double i = await _context.Seller.Where(x => x.SellerId.ToString().Contains(df.Filter) || x.EName.Contains(df.Filter) || x.AName.Contains(df.Filter) || x.DataComment.Contains(df.Filter)).CountAsync();
+
             Paging<Seller> resault = new Paging<Seller>();
-            resault.TotalPages = (int)Math.Ceiling((double)_context.Seller.Count() / df.MaxPageSize);
+            resault.TotalPages = (int)Math.Ceiling(i / df.MaxPageSize);
             resault.CurrentPage = df.PageNumber;
 
             if (!String.IsNullOrEmpty(df.Orderby) && df.IsDesc)

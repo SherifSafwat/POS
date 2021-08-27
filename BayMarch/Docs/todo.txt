@@ -12,8 +12,7 @@
 
 - CHANGE PASS: FORGET[ALL-POST] FORGET-PASS[USER], VERFY-PASS[USER,VERFY-CODE], NEW-PASS[USER,VEFY, PASS]
 
-dynamic:
-========
+
 create
 update [enable]
 get [id]
@@ -21,7 +20,19 @@ getlist
 getpage
 search
 
-static:
+static:  [parentcat - cat - pay - type - uom]
 =======
-get [id]
-getlist
+get: id
+getall:  ord - no cod -
+getlist:  ord - enble + cod
+
+
+dynamic:  [customer - seller - product - supplier]
+========
+create
+update
+get
+getall:  ord - no cod -
+search:  ord - cod
+page:  ord - cod
+getlist:  ord - enble + cod

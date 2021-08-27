@@ -35,15 +35,16 @@ namespace BayMarch.Services
         {
             invoiceDto.InvoiceHead.SellerId = _sellerId;
             invoiceDto.InvoiceHead.CreatedID = _userId;
-            foreach(InvoiceTail tail in invoiceDto.InvoiceTails)
+            _context.InvoiceHead.Add(invoiceDto.InvoiceHead);
+            _context.SaveChanges();
+
+            foreach (InvoiceTail tail in invoiceDto.InvoiceTails)
             {
+                tail.InvoiceHeadId = invoiceDto.InvoiceHead.InvoiceHeadId;
                 tail.SellerId = _sellerId;
                 tail.CreatedID = _userId;
             }
-
-            _context.InvoiceHead.Add(invoiceDto.InvoiceHead);
             _context.InvoiceTail.AddRange(invoiceDto.InvoiceTails);
-            _context.Customer.Add(invoiceDto.Customer);
             return _context.SaveChanges() > 0;
         }
 
@@ -54,36 +55,25 @@ namespace BayMarch.Services
 
         public InvoiceDto Get(long id)
         {
-            InvoiceHead invoiceHead = _context.InvoiceHead.Where(x => x.InvoiceHeadId == id && x.SellerId == _sellerId).FirstOrDefault();
-
-            InvoiceDto invoiceDto = new()
-            {
-                //InvoiceHead = _context.InvoiceHead.Find(id),
-                //InvoiceTails = _context.InvoiceTail.Where(x => x.InvoiceHeadId == id).ToList()
-
-                //InvoiceHead = _context.InvoiceHead.Where(x => x.InvoiceHeadId == id && x.SellerId == _sellerId).FirstOrDefault(),
-                InvoiceHead = invoiceHead,
+            return  new()
+            {                
+                InvoiceHead = _context.InvoiceHead.Where(x => x.InvoiceHeadId == id && x.SellerId == _sellerId).FirstOrDefault(),
                 InvoiceTails = _context.InvoiceTail.Where(x => x.InvoiceHeadId == id && x.SellerId == _sellerId).ToList(),
-                Customer = _context.Customer.Where(x => x.CustomerId ==  invoiceHead.CustomerId ).FirstOrDefault(),
-            };
-            return invoiceDto;
+            };            
         }
 
         public List<InvoiceDto> GetAll()
         {
             throw new System.NotImplementedException();
         }
-
         public List<InvoiceDto> Page(long id, string condition, string orderby)
         {
             throw new System.NotImplementedException();
         }
-
         public PageReq PagesCount()
         {
             throw new System.NotImplementedException();
         }
-
         public bool Update(InvoiceDto InvoiceDto)
         {
             throw new System.NotImplementedException();

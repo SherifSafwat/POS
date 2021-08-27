@@ -28,7 +28,7 @@ namespace BayMarch.Controllers
         // GET: api/orderDtos/5
         [HttpGet("{id}")]
         [Route("Get/{id}")]
-        public IActionResult Getorder(long id)
+        public IActionResult Get(long id)
         {
             var orderDto = _orderService.Get(id);
 
@@ -44,11 +44,11 @@ namespace BayMarch.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Route("Create")]
-        public IActionResult Postorder(OrderDto orderDto)
+        public IActionResult Post(OrderDto orderDto)
         {
             if (_orderService.Create(orderDto))
             {
-                return CreatedAtAction("Getorder", new { id = orderDto.OrderHead.OrderHeadId }, orderDto);
+                return CreatedAtAction("Get", new { id = orderDto.OrderHead.OrderHeadId }, orderDto);
             }
             else
             {

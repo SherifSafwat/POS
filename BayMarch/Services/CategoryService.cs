@@ -13,7 +13,6 @@ namespace BayMarch.Services
 {
     public class CategoryService : IBaseInterface<Category>
     {
-        //private readonly long _sellerId;
         private readonly DataContext _context;
         private readonly IHttpContextAccessor _htttpAccessor;
 
@@ -21,9 +20,6 @@ namespace BayMarch.Services
         {
             _context = context;
             _htttpAccessor = htttpAccessor;
-
-            //var userId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).Id;
-            //_sellerId = _context.Users.FirstOrDefault(x => x.UserName == htttpAccessor.HttpContext.User.Identity.Name).SellerId;
         }
 
         async Task<Category> IBaseInterface<Category>.Get(long id)

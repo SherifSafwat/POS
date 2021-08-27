@@ -51,6 +51,8 @@ namespace BayMarch.Controllers
             return Ok(parentCategory);
         }
 
+
+        /*
         // PUT: api/ParentCategories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -101,7 +103,7 @@ namespace BayMarch.Controllers
         public async Task<ActionResult<IEnumerable<ParentCategory>>> Search(DefaultFilter df)
         {
             return Ok(await _parentCategoryService.Search(df));
-        }
+        }*/
                 
     }
 }

@@ -2,9 +2,11 @@
 using BayMarch.Dto.Filter;
 using BayMarch.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DynamicExpressions.Linq;
 
 namespace BayMarch.Services
 {
@@ -23,14 +25,19 @@ namespace BayMarch.Services
         {
             return await _context.Uom.Where(x => x.Enabled == true).ToListAsync();
         }
+        async Task<IEnumerable<Uom>> IBaseInterface<Uom>.GetAll(DefaultFilter df)
+        {
+            if (!String.IsNullOrEmpty(df.Orderby) && df.IsDesc)
+                return await _context.Uom.OrderBy(df.Orderby + " desc").ToListAsync();
 
+            if (!String.IsNullOrEmpty(df.Orderby))
+                return await _context.Uom.OrderBy(df.Orderby).ToListAsync();
+
+            return await _context.Uom.ToListAsync();
+        }
 
 
         Task<bool> IBaseInterface<Uom>.Create(Uom o)
-        {
-            throw new System.NotImplementedException();
-        }
-        Task<IEnumerable<Uom>> IBaseInterface<Uom>.GetAll(DefaultFilter df)
         {
             throw new System.NotImplementedException();
         }

@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using BayMarch.Models;
 using BayMarch.Data;
 using System.Threading.Tasks;
+using BayMarch.Dto.Filter;
 
 namespace BayMarch.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TypesController : ControllerBase
@@ -19,6 +20,13 @@ namespace BayMarch.Controllers
             _typeService = typeService;
         }
 
+        // GET: api/Types
+        [HttpGet]
+        [Route("GetAll")]
+        public async Task<ActionResult<IEnumerable<Payment>>> GetAll(DefaultFilter df)
+        {
+            return Ok(await _typeService.GetAll(df));
+        }
 
         // GET: api/Types
         [HttpGet]

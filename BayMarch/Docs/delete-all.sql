@@ -1,4 +1,8 @@
+
 USE [bayacom1_baya3_v1]
+
+
+--ALTER DATABASE [bayacom1_baya3_v1] SET RECOVERY SIMPLE;
 
 DECLARE @Sql NVARCHAR(500) DECLARE @Cursor CURSOR
 

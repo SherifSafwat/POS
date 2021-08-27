@@ -5,15 +5,6 @@ namespace BayMarch.Data
 {
     public class ApplicationUser : IdentityUser
     {
-        //ID
-        public long ParamId { get; set; }
-        //public Param ParamObj { get; set; }
-        public long SellerId { get; set; }
-        //public Seller SellerObj { get; set; }
-        public long WareHouseId { get; set; }
-        //public Warehouse WareHouseObj { get; set; }
-        public string RoleId { get; set; }
-        public string DeviceId { get; set; }
 
         //Data
         public string EName { get; set; }
@@ -33,6 +24,14 @@ namespace BayMarch.Data
         public string Comment3 { get; set; }
         public string Comment4 { get; set; }
         public string Comment5 { get; set; }
+
+        //Forign
+        public long ParamId { get; set; }
+        public long SellerId { get; set; }
+        public long WareHouseId { get; set; }
+        public string RoleId { get; set; }
+        public string DeviceId { get; set; }
+
 
         //Hierarchy
         public long SourceId { get; set; }            //system or sellerid

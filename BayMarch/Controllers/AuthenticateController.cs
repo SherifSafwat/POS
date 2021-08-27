@@ -1,9 +1,11 @@
 ﻿using BayMarch.Data;
 using BayMarch.Dto.Request;
 using BayMarch.Dto.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;  
 using Microsoft.AspNetCore.Identity;  
-using Microsoft.AspNetCore.Mvc;  
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;  
 using Microsoft.IdentityModel.Tokens;  
 using System;  
@@ -20,26 +22,28 @@ namespace BayMarch.Controllers
     [ApiController]
     public class AuthenticateController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly DataContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
 
-        public AuthenticateController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public AuthenticateController(DataContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
         {
-            this.userManager = userManager;
-            this.roleManager = roleManager;
+            _context = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
             _configuration = configuration;
         }
 
         [HttpPost]
         //[Route("api//authenticate//login")]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody] LoginReq model)
+        public async Task<IActionResult> Login(LoginReq model)
         {
-            var user = await userManager.FindByNameAsync(model.Username);
-            if (user != null && await userManager.CheckPasswordAsync(user, model.Password))
+            var user = await _userManager.FindByNameAsync(model.Username);
+            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                var userRoles = await userManager.GetRolesAsync(user);
+                var userRoles = await _userManager.GetRolesAsync(user);
 
                 var authClaims = new List<Claim>
                 {
@@ -76,7 +80,7 @@ namespace BayMarch.Controllers
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterReq model)
         {
-            var userExists = await userManager.FindByNameAsync(model.Username);
+            var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new LoginRes { Status = "Error", Message = "User already exists!" });
 
@@ -87,11 +91,50 @@ namespace BayMarch.Controllers
                 UserName = model.Username,
                 SellerId = model.SellerId
             };
-            var result = await userManager.CreateAsync(user, model.Password);
+            var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new LoginRes { Status = "Error", Message = result.ToString() });  //"User creation failed! Please check user details and try again." });
 
             return Ok(new LoginRes { Status = "Success", Message = "User created successfully!" });
+        }
+
+        // GET: api/Customer/5
+        [Authorize]
+        [HttpGet("{id}")]
+        [Route("Get/{id}")]
+        public async Task<ActionResult<ApplicationUser>> Get(LoginReq model)
+        {
+            var user = await _userManager.FindByNameAsync(model.Username);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
+        }
+
+        // PUT: api/Customer/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
+        [HttpPut("{id}")]
+        [Route("Update/{id}")]
+        public async Task<ActionResult<ApplicationUser>> Put(ApplicationUser model)
+        {
+            //var user = await _userManager.FindByNameAsync(model.UserName);
+
+            _context.Entry(model).State = EntityState.Modified;
+            
+
+            if (await _context.SaveChangesAsync() > 0)
+            {
+                return Ok(model);
+            }
+            else
+            {
+                return NotFound();
+            }
+
         }
 
         /*[HttpPost]
