@@ -25,17 +25,17 @@ namespace BayMarch.Controllers
         // GET: api/Categories
         [HttpGet]
         [Route("GetAll")]
-        public async Task<ActionResult<IEnumerable<Category>>> GetAll(DefaultFilter df)
+        public async Task<ActionResult<IEnumerable<Category>>> GetAll(string _Orderby, bool _IsDesc)
         {
-            return Ok(await _categoryService.GetAll(df));
+            return Ok(await _categoryService.GetAll(new DefaultFilter { Orderby = _Orderby, IsDesc = _IsDesc }));
         }
 
         // GET: api/Categories
         [HttpGet]
         [Route("GetList")]
-        public async Task<ActionResult<IEnumerable<Category>>> GetList(DefaultFilter df)
+        public async Task<ActionResult<IEnumerable<Category>>> GetList(long _Id)
         {
-            return Ok(await _categoryService.GetList(df));
+            return Ok(await _categoryService.GetList(new DefaultFilter { Id = _Id }));
         }
 
         // GET: api/Categories/5

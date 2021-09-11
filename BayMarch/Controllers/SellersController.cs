@@ -23,9 +23,9 @@ namespace BayMarch.Controllers
         // GET: api/Sellers
         [HttpGet]
         [Route("GetAll")]
-        public async Task<ActionResult<IEnumerable<Seller>>> GetAll(DefaultFilter df)
+        public async Task<ActionResult<IEnumerable<Seller>>> GetAll(string _Orderby, bool _IsDesc)
         {
-            return Ok(await _sellerService.GetAll(df));
+            return Ok(await _sellerService.GetAll(new DefaultFilter { Orderby = _Orderby, IsDesc = _IsDesc }));
         }
 
         // GET: api/Sellers
@@ -91,16 +91,16 @@ namespace BayMarch.Controllers
 
         [HttpGet]
         [Route("Page")]
-        public async Task<ActionResult<IEnumerable<Seller>>> Page(DefaultFilter df)
+        public async Task<ActionResult<IEnumerable<Seller>>> Page(long _PageNumber, string _Orderby, bool _IsDesc)
         {
-            return Ok(await _sellerService.Page(df));
+            return Ok(await _sellerService.Page(new DefaultFilter { PageNumber = _PageNumber, Orderby = _Orderby, IsDesc = _IsDesc }));
         }
 
         [HttpGet]
         [Route("Search")]
-        public async Task<ActionResult<IEnumerable<Seller>>> Search(DefaultFilter df)
+        public async Task<ActionResult<IEnumerable<Seller>>> Search(string _Filter, string _Orderby, bool _IsDesc)
         {
-            return Ok(await _sellerService.Search(df));
+            return Ok(await _sellerService.Search(new DefaultFilter { Filter = _Filter, Orderby = _Orderby, IsDesc = _IsDesc }));
         }
                 
     }

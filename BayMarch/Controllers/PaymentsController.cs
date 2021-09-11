@@ -24,9 +24,9 @@ namespace BayMarch.Controllers
         // GET: api/Payments
         [HttpGet]
         [Route("GetAll")]
-        public async Task<ActionResult<IEnumerable<Payment>>> GetAll(DefaultFilter df)
+        public async Task<ActionResult<IEnumerable<Payment>>> GetAll(string _Orderby, bool _IsDesc)
         {
-            return Ok(await _parentCategoryService.GetAll(df));
+            return Ok(await _parentCategoryService.GetAll(new DefaultFilter { Orderby = _Orderby, IsDesc = _IsDesc }));
         }
 
         // GET: api/Payments

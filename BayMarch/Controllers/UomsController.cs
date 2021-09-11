@@ -26,9 +26,9 @@ namespace BayMarch.Controllers
         // GET: api/Uoms
         [HttpGet]
         [Route("GetAll")]
-        public async Task<ActionResult<IEnumerable<Uom>>> GetAll(DefaultFilter df)
+        public async Task<ActionResult<IEnumerable<Uom>>> GetAll(string _Orderby, bool _IsDesc)
         {
-            return Ok(await _uomService.GetAll(df));
+            return Ok(await _uomService.GetAll(new DefaultFilter { Orderby = _Orderby, IsDesc = _IsDesc }));
         }
 
         // GET: api/Uoms

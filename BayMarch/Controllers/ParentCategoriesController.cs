@@ -23,9 +23,9 @@ namespace BayMarch.Controllers
         // GET: api/ParentCategories
         [HttpGet]
         [Route("GetAll")]
-        public async Task<ActionResult<IEnumerable<ParentCategory>>> GetAll(DefaultFilter df)
+        public async Task<ActionResult<IEnumerable<ParentCategory>>> GetAll(string _Orderby, bool _IsDesc)
         {
-            return Ok(await _parentCategoryService.GetAll(df));
+            return Ok(await _parentCategoryService.GetAll(new DefaultFilter { Orderby = _Orderby, IsDesc = _IsDesc }));
         }
 
         // GET: api/ParentCategories
